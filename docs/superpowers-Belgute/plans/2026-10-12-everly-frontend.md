@@ -8,7 +8,7 @@
 
 **Tech Stack:** Next.js 15 (React 19), TypeScript, Tailwind CSS, Vitest + Testing Library, Playwright, zod.
 
-**Spec:** `docs/superpowers/specs/2026-10-12-everly-grocery-design.md` (§3 module-ууд, §4 урсгал; backend хэсгүүд энэ plan-д ороогүй). Backend-тэй бүрэн plan: `2026-10-12-everly-mvp-fullstack.md`.
+**Spec:** `docs/superpowers-Belgute/specs/2026-10-12-everly-grocery-design.md` (§3 module-ууд, §4 урсгал; backend хэсгүүд энэ plan-д ороогүй). Backend-тэй бүрэн plan: `2026-10-12-everly-mvp-fullstack.md`.
 
 ## Global Constraints
 

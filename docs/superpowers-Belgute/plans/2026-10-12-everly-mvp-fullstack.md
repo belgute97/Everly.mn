@@ -8,7 +8,7 @@
 
 **Tech Stack:** Next.js 15 (React 19), TypeScript, Tailwind CSS, PostgreSQL 16, Prisma, Vitest, Playwright, zod, jose (session JWT).
 
-**Spec:** `docs/superpowers/specs/2026-10-12-everly-grocery-design.md`
+**Spec:** `docs/superpowers-Belgute/specs/2026-10-12-everly-grocery-design.md`
 
 ## Global Constraints
 
