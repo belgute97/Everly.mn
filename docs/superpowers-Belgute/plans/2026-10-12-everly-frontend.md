@@ -21,6 +21,11 @@
 - Бүтээгдэхүүн бүр `vendorId` талбартай (бүгд `"everly"`).
 - Backend, DB, бодит SMS/QPay энэ plan-д **байхгүй**. Mock-ыг UI-д "Туршилтын горим" гэж тодорхой харуулна.
 - `localStorage` хандалт бүр `try/catch`-тэй; байхгүй/эвдэрсэн үед аппликейшн унахгүй.
+- Mock өгөгдлийн хувилбар `MOCK_VERSION` (`src/mocks/version.ts`); `localStorage["everly.version"]` таарахгүй бол mock-ийн бүх `everly.*` түлхүүрийг цэвэрлэж дахин эхлүүлнэ (хуучин хэлбэртэй өгөгдлөөс болж унахгүй).
+- Mock ангилалын `id` нь `slug`-тай ижил (`"nogoo"`); бүсийн id: `"bzd"`, `"shd"`, `"hud"`.
+- Mock api нь процессын санах ойд төлөв хадгалахгүй, бүх төлөвийг `localStorage`-оос уншина (тест болон refresh-д найдвартай).
+- Өгөгдөл `localStorage`-оос ирдэг тул өгөгдөл уншдаг хуудас бүр Client Component (`"use client"`); hydration-ий зөрүүгээс сэргийлж `ready` болтол skeleton харуулна.
+- Input бүр `<label>`-тай (a11y болон тест нь label-аар хайна); товч бүр харагдах текст эсвэл `aria-label`-тай.
 
 ## Review Focus
 
@@ -221,8 +226,8 @@ export interface Api {
   requestOtp(phone: string, now?: Date): Promise<void>;             // Error: INVALID_PHONE | TOO_SOON
   verifyOtp(phone: string, code: string, now?: Date): Promise<{ phone: string }>; // Error: INVALID | EXPIRED | LOCKED
   createOrder(i: { phone: string; lines: CartLine[]; zoneId: string; slotId: string; addressLine: string;
-    substitution: "ALLOW" | "NONE"; paymentMethod: PaymentMethod }): Promise<Order>;
-    // Error: EMPTY_CART | OUT_OF_STOCK:<productId> | SLOT_FULL | BELOW_MINIMUM | ZONE_UNKNOWN
+    substitution: "ALLOW" | "NONE"; paymentMethod: PaymentMethod; now?: Date }): Promise<Order>;
+    // Error: EMPTY_CART | ZONE_UNKNOWN | SLOT_UNKNOWN | SLOT_FULL | OUT_OF_STOCK:<productId> | BELOW_MINIMUM
   payOrderMock(orderId: string): Promise<Order>;                    // QPAY захиалгыг CONFIRMED болгоно
   listOrders(phone: string): Promise<Order[]>;
   getOrder(id: string, phone: string): Promise<Order | null>;
@@ -237,14 +242,14 @@ export const api: Api = mockApi;
   - `categories.ts`: 6 ангилал (Хүнсний ногоо 🥬, Жимс 🍎, Мах 🥩, Сүү, Өндөг 🥛, Талх, Нарийн боов 🍞, Ундаа 🥤).
   - `products.ts`: ≥ 24 бараа (ангилал бүрд 3–5), үнэ 500–35,000₮ бүхэл тоо, `stock` янз бүр (нэг нь `0` — "Дууссан" харуулахад, нэг нь `2` — доод нөөцөд), мах/ногоо `unit: "KG"`, зарим нь `origin`, `shelfLifeDays`-тэй. `slug` нь латин. Зураг: `imageUrl` байхгүй, UI эможи/өнгөт placeholder харуулна.
   - `zones.ts`: 3 бүс (БЗД `fee 3000 min 20000`, СХД `fee 3500 min 25000`, ХУД `fee 4000 min 30000`).
-  - `slots.ts`: `generateSlots(now: Date): Slot[]` — бүс бүрт өнөөдөр, маргааш, нөгөөдөр `10–12, 12–14, 16–18, 18–20`; capacity 6; зарим нь `booked = capacity` (дүүрсэн); өнгөрсөн цонхыг оруулахгүй. Тодорхой (deterministic): `booked` нь индексээс тооцогдоно.
+  - `slots.ts`: `generateSlots(now: Date): Slot[]` — бүс бүрт өнөөдөр, маргааш, нөгөөдөр `10–12, 12–14, 16–18, 18–20`; capacity 6; зарим нь `booked = capacity` (дүүрсэн); өнгөрсөн цонхыг оруулахгүй. Тодорхой (deterministic): цонхны id = `${zoneId}-${YYYYMMDD}-${HH}` (жишээ `bzd-20300105-10`), тиймээс ижил `now`-оор үргэлж ижил id гарна; `booked` нь индексээс тооцогдоно (өнөөдрийн 18–20 цонх дүүрсэн).
 
 - [ ] **Step 2: Failing tests** `tests/unit/mock-api.test.ts` (хамгийн чухлууд):
 
 ```ts
 import { describe, it, expect } from "vitest";
 import { mockApi as api } from "@/data/mock-api";
-import { FULL_SLOT_ID } from "@/mocks/slots"; // БЗД бүсийн урд талын нэг дүүрсэн цонхны тогтмол id
+import { fullSlotId } from "@/mocks/slots"; // fullSlotId(now, zoneId): тухайн өдрийн 18–20 цонх, үргэлж дүүрсэн
 
 const NOW = new Date("2030-01-05T08:00:00+08:00");
 describe("catalog", () => {
@@ -282,7 +287,7 @@ describe("otp", () => {
 describe("orders", () => {
   const base = async () => { const [p] = (await api.listProducts({})).filter(p => p.stock >= 5 && p.priceMnt * 5 >= 20000);
     const slot = (await api.listSlots("bzd", NOW))[0];
-    return { p, input: { phone: "99112233", lines: [{ productId: p.id, qty: 5 }], zoneId: "bzd", slotId: slot.id, addressLine: "БЗД 3-р хороо", substitution: "NONE" as const, paymentMethod: "CASH" as const } }; };
+    return { p, input: { phone: "99112233", lines: [{ productId: p.id, qty: 5 }], zoneId: "bzd", slotId: slot.id, addressLine: "БЗД 3-р хороо", substitution: "NONE" as const, paymentMethod: "CASH" as const, now: NOW } }; };
   it("snapshots price, decrements stock, books slot, CASH is CONFIRMED", async () => {
     const { p, input } = await base(); const before = p.stock;
     const o = await api.createOrder(input);
@@ -300,7 +305,8 @@ describe("orders", () => {
     await expect(api.createOrder({ ...input, lines: [] })).rejects.toThrow("EMPTY_CART");
     await expect(api.createOrder({ ...input, lines: [{ productId: input.lines[0].productId, qty: 1 }] })).rejects.toThrow("BELOW_MINIMUM");
     await expect(api.createOrder({ ...input, lines: [{ productId: input.lines[0].productId, qty: 99999 }] })).rejects.toThrow(/OUT_OF_STOCK/);
-    await expect(api.createOrder({ ...input, slotId: FULL_SLOT_ID })).rejects.toThrow("SLOT_FULL");
+    await expect(api.createOrder({ ...input, slotId: fullSlotId(NOW, "bzd") })).rejects.toThrow("SLOT_FULL");
+    await expect(api.createOrder({ ...input, slotId: "nope" })).rejects.toThrow("SLOT_UNKNOWN");
   });
   it("orders are scoped to the phone", async () => {
     const { input } = await base(); const o = await api.createOrder(input);
@@ -317,16 +323,17 @@ describe("orders", () => {
   });
 });
 ```
-`beforeEach`-д `localStorage.clear()` ба mock-ийн дотоод төлөвийг дахин тохируулдаг `mockApi.__reset()` (зөвхөн тестэд) дуудна. `slots.ts` нь `FULL_SLOT_ID`-г export хийнэ (БЗД бүсийн, ирээдүйн, `booked = capacity` цонх; `generateSlots` үүнийг үргэлж агуулна).
+Тест бүрийн өмнө `tests/setup.ts` `localStorage.clear()` хийдэг; mock api санах ойд төлөв хадгалдаггүй тул өөр reset хэрэггүй. `slots.ts` нь `fullSlotId(now, zoneId)`-г export хийнэ (`generateSlots(now)`-ийн өнөөдрийн 18–20 цонх үргэлж `booked = capacity`; тэр цонх `now`-оос өмнө болсон бол маргаашийнх).
 
 - [ ] **Step 3:** `npx vitest run tests/unit/mock-api.test.ts` → FAIL.
 
 - [ ] **Step 4: Implementation** `src/data/mock-api.ts`. Төлөв:
   - Нөөц: `localStorage["everly.stock"]` = `{[productId]: number}` override; уншихдаа `products` mock дээр override давхарлана.
+  - Хувилбар: `localStorage["everly.version"]` ≠ `MOCK_VERSION` бол бүх `everly.*` түлхүүрийг цэвэрлээд хувилбарыг бичнэ (api-ийн дуудлага бүрийн эхэнд `ensureVersion()`).
   - Слот: `localStorage["everly.slotBooked"]` = `{[slotId]: number}` override.
   - Захиалга: `localStorage["everly.orders"]` = `Order[]`.
   - OTP: `localStorage["everly.otp"]` = `{[phone]: {createdAt, expiresAt, attempts}}`.
-  - `createOrder`: бүх шалгалтыг эхлээд хийнэ (EMPTY_CART → ZONE_UNKNOWN → SLOT_FULL (slot zone таарч байх) → нөөц (`OUT_OF_STOCK:<id>`) → BELOW_MINIMUM), дараа нь нэг дор нөөц, цонхны `booked`, захиалгыг бичнэ (хагас бичилт үүсгэхгүй). Захиалгын id: `EV-` + 6 оронтой тоо. Захиалгын мөр нэр, үнийг хуулна.
+  - `createOrder`: цонхыг `generateSlots(input.now ?? new Date())`-аас id-аар хайна (олдохгүй эсвэл бүс таарахгүй бол `SLOT_UNKNOWN`). Бүх шалгалтыг эхлээд хийнэ (EMPTY_CART → ZONE_UNKNOWN → SLOT_UNKNOWN → SLOT_FULL → нөөц (`OUT_OF_STOCK:<id>`) → BELOW_MINIMUM), дараа нь нэг дор нөөц, цонхны `booked`, захиалгыг бичнэ (хагас бичилт үүсгэхгүй). Захиалгын id: `EV-` + 6 оронтой тоо. Захиалгын мөр нэр, үнийг хуулна.
   - `payOrderMock`: `PENDING_PAYMENT` бол `CONFIRMED`, аль хэдийн `CONFIRMED` бол юу ч өөрчлөхгүй буцаана.
   - `adminAdvanceOrder`: `CONFIRMED → PICKING → OUT_FOR_DELIVERY → DELIVERED`; өөр бол `INVALID_TRANSITION`.
   - Бүх async функц `await delay(120)` (UI-ийн loading төлөвийг харуулахын тулд); тестэд `process.env.MOCK_DELAY=0`.
@@ -409,7 +416,8 @@ export function cartReducer(state: CartLine[], a: CartAction): CartLine[] {
   - `search`: `?q=` -оор `api.listProducts`; үр дүнгүй бол "«{q}» олдсонгүй. Өөр үгээр хайж үзнэ үү" + ангиллын холбоосууд.
   - `p/[slug]`: нэр, үнэ/нэгж, тайлбар, гарал үүсэл, хадгалах хугацаа, `AddToCart`; олдохгүй бол "Бараа олдсонгүй" хуудас (`notFound()` биш, client-д).
   - Эможи placeholder: ангиллын `emoji`-г том үсгээр өнгөт дэвсгэр дээр.
-  - Хуудас бүр `<title>` (metadata).
+  - Хуудас бүр `<title>` (`document.title`-ийг effect-ээр, учир нь Client Component). `layout.tsx`-д анхдагч title "Everly — хүнсний онлайн дэлгүүр".
+  - `MockBanner` дотор "Mock өгөгдөл сэргээх" товч: баталгаажуулах `confirm` дараа бүх `everly.*` түлхүүрийг устгаад `location.reload()`.
 - [ ] **Step 4:** PASS + гараар `npm run dev`, 390px-д нүүр → ангилал → бараа замыг шалгана.
 - [ ] **Step 5:** `git add -A && git commit -m "feat: storefront browsing pages"`
 
@@ -456,7 +464,34 @@ export function cartReducer(state: CartLine[], a: CartAction): CartLine[] {
   - Амжилттай: `CASH` → `/orders/{id}`; `QPAY` → `/pay/{id}`; сагс цэвэрлэгдэнэ.
   - `createOrder` `OUT_OF_STOCK` шидвэл мессеж харагдаж, сагс нөөцөөр дахин тохируулагдана, хуудас унахгүй.
   - Давхар товшилт: "Баталгаажуулах" дарсны дараа дуусах хүртэл disabled (нэг л захиалга үүснэ).
-- [ ] **Step 2:** FAIL. **Step 3:** Хэрэгжүүлнэ. Нийт дүнг үргэлж `api.getProductsByIds`-аас авсан одоогийн үнээр `computeTotals`-д өгч тооцно (localStorage-д үнэ хадгалахгүй, зөвхөн `productId`+`qty`). Checkout эхлэхэд нэг удаа сагсыг нөөцтэй тулгана.
+  - Цэвэр дүрмийн unit тест `tests/unit/checkout-rules.test.ts`:
+```ts
+import { it, expect } from "vitest";
+import { checkoutBlockReason } from "@/lib/checkout-rules";
+const ok = { addressLine: "БЗД 3-р хороо", zone: { id: "bzd", minOrderMnt: 20000 }, slot: { booked: 1, capacity: 6 }, subtotalMnt: 25000, submitting: false };
+it("ok", () => expect(checkoutBlockReason(ok)).toBeNull());
+it("address", () => expect(checkoutBlockReason({ ...ok, addressLine: "  " })).toBe("Хаягаа оруулна уу"));
+it("zone", () => expect(checkoutBlockReason({ ...ok, zone: null })).toBe("Хүргэлтийн бүсээ сонгоно уу"));
+it("slot", () => expect(checkoutBlockReason({ ...ok, slot: null })).toBe("Хүргэлтийн цагаа сонгоно уу"));
+it("full slot", () => expect(checkoutBlockReason({ ...ok, slot: { booked: 6, capacity: 6 } })).toBe("Энэ цонх дүүрсэн, өөр цаг сонгоно уу"));
+it("minimum", () => expect(checkoutBlockReason({ ...ok, subtotalMnt: 5000 })).toBe("Хамгийн бага захиалгын дүн 20,000₮"));
+it("submitting", () => expect(checkoutBlockReason({ ...ok, submitting: true })).toBe("Түр хүлээнэ үү…"));
+```
+- [ ] **Step 2:** FAIL. **Step 3:** Эхлээд `src/lib/checkout-rules.ts`:
+```ts
+import { formatMnt } from "./money";
+export function checkoutBlockReason(s: { addressLine: string; zone: { id: string; minOrderMnt: number } | null;
+  slot: { booked: number; capacity: number } | null; subtotalMnt: number; submitting: boolean }): string | null {
+  if (s.submitting) return "Түр хүлээнэ үү…";
+  if (!s.addressLine.trim()) return "Хаягаа оруулна уу";
+  if (!s.zone) return "Хүргэлтийн бүсээ сонгоно уу";
+  if (!s.slot) return "Хүргэлтийн цагаа сонгоно уу";
+  if (s.slot.booked >= s.slot.capacity) return "Энэ цонх дүүрсэн, өөр цаг сонгоно уу";
+  if (s.subtotalMnt < s.zone.minOrderMnt) return `Хамгийн бага захиалгын дүн ${formatMnt(s.zone.minOrderMnt)}`;
+  return null;
+}
+```
+Товчийн `disabled` ба тайлбар текст нь энэ функцээс (`reason !== null`) гарна. Дараа нь хуудсуудыг хэрэгжүүлнэ. Нийт дүнг үргэлж `api.getProductsByIds`-аас авсан одоогийн үнээр `computeTotals`-д өгч тооцно (localStorage-д үнэ хадгалахгүй, зөвхөн `productId`+`qty`). Checkout эхлэхэд нэг удаа сагсыг нөөцтэй тулгана.
 - [ ] **Step 4:** PASS. **Step 5:** `git add -A && git commit -m "feat: cart and checkout"`
 
 ---

@@ -8,7 +8,9 @@
 
 **Tech Stack:** Next.js 15 (React 19), TypeScript, Tailwind CSS, PostgreSQL 16, Prisma, Vitest, Playwright, zod, jose (session JWT).
 
-**Spec:** `docs/superpowers-Belgute/specs/2026-10-12-everly-grocery-design.md`
+**Spec:** `docs/superpowers-Belgute/specs/2026-10-12-everly-grocery-design.md` (UI: `2026-10-12-everly-frontend-spec.md`)
+
+**Холбоос:** UI-г `2026-10-12-everly-frontend.md` plan-д mock дээр бүтээнэ. Энэ plan нь backend-ийг бүтээж, Task 11-д frontend-ийн `src/data/api.ts`-ийг бодит HTTP-ээр сольж холбоно.
 
 ## Global Constraints
 
@@ -19,6 +21,9 @@
 - Захиалгын мөр нь захиалгын үеийн үнийг хуулж хадгална.
 - Нөөцийг transaction дотор хасна (давхар захиалгаас сэргийлнэ).
 - Төлбөр QPay (callback-ээр баталгаажуулна); бэлнээр төлөх сонголт хүргэлт дээр.
+- Мутаци хийдэг route бүр `Origin` header-ийг өөрийн host-той тулгана (CSRF); session cookie `SameSite=Lax`, `HttpOnly`.
+- Бүх зөвшөөрлийн шалгалт серверт (хэрэглэгч зөвхөн өөрийн захиалга/хаяг/сагсыг харна).
+- PostgreSQL нь UTF-8 locale-той (`en_US.utf8`): `pg_trgm` кирилл үсгийг зөв танихад шаардлагатай.
 - MVP-д байхгүй: тогтмол захиалга, купон/оноо, жор, жолоочийн апп, олон худалдагч, аймаг, англи хэл.
 
 ## Review Focus
@@ -28,6 +33,9 @@
 3. Цонхны capacity дүүрэх мөчид хоёр checkout зэрэг ирвэл: capacity хэтрэхгүй.
 4. OTP: буруу код олон удаа оруулбал түгждэг, хугацаа дууссан код хүчингүй.
 5. Хоосон сагс, тоо хэмжээ 0 эсвэл сөрөг, жишээ нь 10 000 гэх хэт их тоогоор checkout хийхэд ойлгомжтой алдаа буцаана.
+6. Хэрэглэгч А хэрэглэгч Б-ийн захиалгыг ID-аар нээхийг оролдвол 404 (IDOR). Task 8 ба 11-д тест бий.
+7. Төлөгдөөгүй QPay захиалга 30 минутын дараа цуцлагдаж, нөөц болон цонх буцаж чөлөөлөгдөнө (Task 8).
+8. Нэг утсанд OTP-г өдөрт 10-аас олон удаа илгээх боломжгүй (SMS зардлын мөлжлөгөөс сэргийлнэ, Task 4).
 
 ---
 
@@ -82,11 +90,11 @@ npx prisma init --datasource-provider postgresql
 services:
   db:
     image: postgres:16
-    environment: { POSTGRES_USER: everly, POSTGRES_PASSWORD: everly, POSTGRES_DB: everly }
+    environment: { POSTGRES_USER: everly, POSTGRES_PASSWORD: everly, POSTGRES_DB: everly, POSTGRES_INITDB_ARGS: "--locale=en_US.utf8" }
     ports: ["5432:5432"]
   db_test:
     image: postgres:16
-    environment: { POSTGRES_USER: everly, POSTGRES_PASSWORD: everly, POSTGRES_DB: everly_test }
+    environment: { POSTGRES_USER: everly, POSTGRES_PASSWORD: everly, POSTGRES_DB: everly_test, POSTGRES_INITDB_ARGS: "--locale=en_US.utf8" }
     ports: ["5433:5432"]
 ```
 
@@ -329,6 +337,14 @@ export const getProductBySlug = (slug: string) => prisma.product.findFirst({ whe
 export const listCategories = () => prisma.category.findMany({ orderBy: { name: "asc" } });
 ```
 
+- [ ] **Step 3b: Кирилл trigram-ыг шалгах тест** (locale буруу бол энд тэр дор илрнэ). `catalog.test.ts`-д нэм:
+```ts
+it("pg_trgm understands Cyrillic", async () => {
+  const r = await prisma.$queryRaw<{ s: number }[]>`SELECT similarity('байцаа', 'байцаах')::float AS s`;
+  expect(r[0].s).toBeGreaterThan(0.3);
+});
+```
+
 - [ ] **Step 4:** `npx prisma migrate dev && npx vitest run tests/integration/catalog.test.ts` → PASS. Хэрэв typo тест унавал `similarity` босгыг 0.2 болгож тохируулна.
 
 - [ ] **Step 5: Seed** `prisma/seed.ts` дотор 3 ангилал, 12 бараа үүсгэж, `package.json`-д `"prisma": {"seed": "tsx prisma/seed.ts"}` нэм. Commit: `git commit -am "feat: catalog and fuzzy search"`
@@ -383,6 +399,12 @@ it("code cannot be reused", async () => {
   await verifyOtp("99112233", c);
   await expect(verifyOtp("99112233", c)).rejects.toThrow();
 });
+it("caps OTP requests at 10 per phone per 24h", async () => {
+  const t0 = new Date("2026-01-01T00:00:00Z");
+  for (let i = 0; i < 10; i++) await requestOtp("99112233", new Date(t0.getTime() + i * 61_000));
+  await expect(requestOtp("99112233", new Date(t0.getTime() + 11 * 61_000))).rejects.toThrow("DAILY_LIMIT");
+  await expect(requestOtp("99112233", new Date(t0.getTime() + 25 * 3600_000))).resolves.toBeUndefined();
+});
 it("limits resend to 1 per 60s", async () => {
   const t0 = new Date("2026-01-01T10:00:00Z");
   await requestOtp("99112233", t0);
@@ -413,6 +435,8 @@ export async function requestOtp(rawPhone: string, now = new Date()) {
   const phone = normalizePhone(rawPhone); if (!phone) throw new Error("INVALID_PHONE");
   const recent = await prisma.otpCode.findFirst({ where: { phone, createdAt: { gt: new Date(now.getTime() - 60_000) } } });
   if (recent) throw new Error("TOO_SOON");
+  const day = await prisma.otpCode.count({ where: { phone, createdAt: { gt: new Date(now.getTime() - 24 * 3600_000) } } });
+  if (day >= 10) throw new Error("DAILY_LIMIT");
   const code = String(randomInt(0, 1_000_000)).padStart(6, "0");
   await prisma.otpCode.create({ data: { phone, codeHash: hash(phone, code), expiresAt: new Date(now.getTime() + 5 * 60_000), createdAt: now } });
   await sms.getSms().send(phone, `Everly: таны код ${code}`);
@@ -768,6 +792,28 @@ export async function confirmPayment(externalId: string): Promise<"CONFIRMED" | 
 ```
 Callback route: `externalId`-г `order` query-ээс Payment хүснэгтээр хайж `confirmPayment` дуудаад 200 буцаана.
 
+**Хугацаа хэтэрсэн төлөгдөөгүй захиалгыг цуцлах** (`src/server/payments/expire.ts`), spec §6:
+```ts
+import { prisma } from "@/lib/db";
+import { cancelOrder } from "@/server/orders";
+import { getPaymentProvider } from "./provider";
+export async function expireUnpaidOrders(now = new Date(), ttlMinutes = 30): Promise<number> {
+  const stale = await prisma.order.findMany({ where: { status: "PENDING_PAYMENT", paymentMethod: "QPAY",
+    createdAt: { lt: new Date(now.getTime() - ttlMinutes * 60_000) } }, include: { payments: true } });
+  let n = 0;
+  for (const o of stale) {
+    const paid = await Promise.all(o.payments.filter(p => p.externalId).map(p => getPaymentProvider().isPaid(p.externalId!)));
+    if (paid.some(Boolean)) continue; // төлөгдсөн бол цуцлахгүй, callback/poll баталгаажуулна
+    await cancelOrder(o.id); n++;
+  }
+  return n;
+}
+```
+Route `src/app/api/cron/expire/route.ts`: `Authorization: Bearer ${CRON_SECRET}` шалгаад `expireUnpaidOrders()` дуудна (минут тутам хуваарьлагдсан cron-оор).
+Тестүүд (`payments.test.ts`-д нэм): (1) 31 минутын настай, төлөгдөөгүй QPAY захиалга цуцлагдаж нөөц, цонх буцна; (2) 10 минутын настай захиалга хөндөгдөхгүй; (3) provider "төлөгдсөн" гэвэл 31 минутын настай ч цуцлагдахгүй; (4) CASH захиалга хөндөгдөхгүй; (5) хоёр дахин дуудахад нөөц давхар буцахгүй.
+
+**Poll нөөц зам:** `GET /api/orders/[id]` нь хэрэглэгч өөрийнх нь захиалга биш бол `404` буцаана (IDOR); захиалга `PENDING_PAYMENT` бол `confirmPayment`-ийг нэг удаа оролдоод шинэ төлвийг буцаана (callback алдагдсан үед хамгаална). Тест: хэрэглэгч Б хэрэглэгч А-гийн захиалгын id-г дуудахад 404.
+
 *Цуцлагдсан захиалгад төлбөр ирвэл:* `Payment` PAID болно, захиалга CANCELLED хэвээр үлдэнэ. Админ самбарт "төлөгдсөн боловч цуцлагдсан" жагсаалтаар гараар буцаалт хийнэ (Task 10).
 
 - [ ] **Step 4:** PASS. **Step 5:** `git commit -am "feat: QPay payments with idempotent confirmation"`
@@ -843,6 +889,20 @@ it("createSlots is idempotent for same window", async () => { /* дахин ду
 it("STAFF cannot manage zones", async () => await expect(upsertZone(staffCtx, valid)).rejects.toThrow("FORBIDDEN"));
 ```
 
+- [ ] **Step 1b: Staff нэвтрэлтийн тест** `tests/integration/staff-auth.test.ts`:
+```ts
+import { it, expect } from "vitest";
+import { hashPassword, verifyPassword } from "@/server/admin/auth";
+it("verifies the right password only", async () => {
+  const h = await hashPassword("s3cret-pass");
+  expect(await verifyPassword("s3cret-pass", h)).toBe(true);
+  expect(await verifyPassword("wrong", h)).toBe(false);
+});
+it("salts: same password gives different hashes", async () => expect(await hashPassword("a")).not.toBe(await hashPassword("a")));
+it("rejects malformed stored hash without throwing", async () => expect(await verifyPassword("a", "garbage")).toBe(false));
+```
+`hashPassword`/`verifyPassword`: `scrypt` + 16 byte random salt, формат `scrypt$<saltHex>$<hashHex>`, `timingSafeEqual`-ээр харьцуулна. Нэвтрэх оролдлого email тутамд 5 удаа/15 минут (`StaffUser`-т `failedLogins`, `lockedUntil` талбар нэм).
+
 - [ ] **Step 2:** FAIL. **Step 3: Implementation**
 
 - `scripts/create-admin.ts`: `bcrypt`-гүйгээр `node:crypto.scrypt`-ээр hash хийж `StaffUser` үүсгэнэ. Admin session нь `adminSession` cookie (Task 4-ийн JWT-тэй ижил арга, өөр cookie нэр, `sub = staffId`, `role` claim).
@@ -855,51 +915,72 @@ it("STAFF cannot manage zones", async () => await expect(upsertZone(staffCtx, va
 
 ---
 
-### Task 11: Storefront хуудсууд (React UI)
+### Task 11: Frontend-ийг backend-тэй холбох (HTTP adapter ба contract тест)
 
 **Files:**
-- Create: `src/app/(shop)/layout.tsx`, `page.tsx` (нүүр), `c/[slug]/page.tsx`, `p/[slug]/page.tsx`, `search/page.tsx`, `cart/page.tsx`, `checkout/page.tsx`, `orders/page.tsx`, `orders/[id]/page.tsx`, `login/page.tsx`, `src/components/{ProductCard,AddToCart,CartProvider,SlotPicker,AddressForm,Header}.tsx`, `src/app/api/cart/route.ts`
+- Create: `src/app/api/**/route.ts` (доорх жагсаалт), `src/data/http-api.ts`, `tests/contract/api.contract.ts`, `tests/contract/mock.test.ts`, `tests/contract/http.test.ts`
+- Modify: `src/data/api.ts` (`export const api: Api = process.env.NEXT_PUBLIC_API_MODE === "http" ? httpApi : mockApi;`)
 
 **Interfaces:**
-- Consumes: Task 3-9-ийн server функцууд (Server Component/route handler-аар).
-- Produces: UI. Нэвтрээгүй сагс `localStorage["everly.cart"]` (`{productId, qty}[]`), нэвтэрсний дараа `POST /api/cart/merge` хийж серверийн сагстай нэгтгэнэ (productId бүрээр хамгийн их qty-г, stock-оор хязгаарлан).
+- Consumes: frontend plan-ийн `Api` интерфейс (`2026-10-12-everly-frontend.md` Task 3), энэ plan-ийн Task 3–10-ын server функцууд.
+- Produces: `httpApi: Api`; route-ууд:
+  `GET /api/categories`, `GET /api/products?categorySlug&q`, `GET /api/products/[slug]`, `POST /api/products/by-ids`, `GET /api/zones`, `GET /api/zones/[id]/slots`, `POST /api/auth/request-otp`, `POST /api/auth/verify-otp`, `GET /api/orders`, `POST /api/orders`, `GET /api/orders/[id]`, `POST /api/orders/[id]/pay-mock` (зөвхөн `PAYMENT_PROVIDER=mock`), `GET|POST /api/cart`.
 
-- [ ] **Step 1: Failing тест (merge логик, цэвэр функц)** `tests/unit/cart-merge.test.ts`:
+- [ ] **Step 1: Contract тест.** Mock болон http хэрэгжилт хоёулаа ижил дүрмийг биелүүлнэ.
 
+`tests/contract/api.contract.ts`:
 ```ts
-import { it, expect } from "vitest"; import { mergeCarts } from "@/lib/cart-merge";
-it("takes max qty per product, capped by stock", () => {
-  expect(mergeCarts([{ productId: "a", qty: 2 }], [{ productId: "a", qty: 5 }, { productId: "b", qty: 1 }], { a: 4, b: 9 }))
-    .toEqual([{ productId: "a", qty: 4 }, { productId: "b", qty: 1 }]);
-});
-it("drops products with zero stock", () => expect(mergeCarts([], [{ productId: "a", qty: 1 }], { a: 0 })).toEqual([]));
-```
-Implementation `src/lib/cart-merge.ts`:
-```ts
-export function mergeCarts(server: {productId:string;qty:number}[], local: {productId:string;qty:number}[], stock: Record<string, number>) {
-  const m = new Map<string, number>();
-  for (const i of [...server, ...local]) m.set(i.productId, Math.max(m.get(i.productId) ?? 0, i.qty));
-  return [...m].map(([productId, qty]) => ({ productId, qty: Math.min(qty, stock[productId] ?? 0) })).filter(i => i.qty > 0);
+import { describe, it, expect } from "vitest";
+import type { Api } from "@/data/api";
+export function apiContract(name: string, make: () => Promise<{ api: Api; login: (phone: string) => Promise<void> }>) {
+  describe(`Api contract: ${name}`, () => {
+    it("lists categories and tolerant product search", async () => {
+      const { api } = await make();
+      expect((await api.listCategories()).length).toBeGreaterThan(0);
+      expect(await api.listProducts({ q: "zzzzqq" })).toEqual([]);
+    });
+    it("rejects bad phone and wrong OTP with the same error codes", async () => {
+      const { api } = await make();
+      await expect(api.requestOtp("123")).rejects.toThrow("INVALID_PHONE");
+      await expect(api.verifyOtp("99112233", "000000")).rejects.toThrow("INVALID");
+    });
+    it("order lifecycle: create, pay, scoped reads", async () => {
+      const { api, login } = await make(); await login("99112233");
+      const [p] = (await api.listProducts({})).filter(p => p.stock >= 5 && p.priceMnt * 5 >= 20000);
+      const zone = (await api.listZones())[0]; const slot = (await api.listSlots(zone.id))[0];
+      const o = await api.createOrder({ phone: "99112233", lines: [{ productId: p.id, qty: 5 }], zoneId: zone.id, slotId: slot.id,
+        addressLine: "БЗД", substitution: "NONE", paymentMethod: "QPAY" });
+      expect(o.status).toBe("PENDING_PAYMENT");
+      expect((await api.payOrderMock(o.id)).status).toBe("CONFIRMED");
+      expect(await api.getOrder(o.id, "88000000")).toBeNull();
+    });
+    it("error codes: empty cart, qty over stock", async () => {
+      const { api, login } = await make(); await login("99112233");
+      const zone = (await api.listZones())[0]; const slot = (await api.listSlots(zone.id))[0];
+      const base = { phone: "99112233", zoneId: zone.id, slotId: slot.id, addressLine: "x", substitution: "NONE" as const, paymentMethod: "CASH" as const };
+      await expect(api.createOrder({ ...base, lines: [] })).rejects.toThrow("EMPTY_CART");
+      const [p] = await api.listProducts({});
+      await expect(api.createOrder({ ...base, lines: [{ productId: p.id, qty: 99999 }] })).rejects.toThrow(/OUT_OF_STOCK/);
+    });
+  });
 }
 ```
+`mock.test.ts`: `apiContract("mock", async () => ({ api: mockApi, login: async () => {} }))`. `http.test.ts`: `apiContract("http", ...)`. Next серверийг тестийн DB-тэй (`PAYMENT_PROVIDER=mock`) ажиллуулж, `httpApi`-г `fetch` + cookie jar-аар дууддаг; `login` нь OTP-г `/api/test/last-sms`-аас уншина.
 
-- [ ] **Step 2:** FAIL → **Step 3:** дээрх код → PASS.
+- [ ] **Step 2:** `npx vitest run tests/contract` → mock PASS, http FAIL (route, adapter байхгүй).
 
-- [ ] **Step 4: Хуудсуудыг бүтээх.** Дүрмүүд:
-  - Mobile-first (Tailwind `sm:` брейкпойнтоор томруулна), бүтээгдэхүүний карт: зураг, нэр, нэгж үнэ (`formatMnt`), "Сагсанд нэмэх", нөөц дууссан бол идэвхгүй товч "Дууссан".
-  - `p/[slug]`, `c/[slug]` нь Server Component (SEO), `generateMetadata`-тай.
-  - `checkout`: 1) хаяг (тайлбар хаяг заавал + газрын зургийн pin сонголттой), 2) бүс (хаягаас сонгоно), 3) `SlotPicker` (зөвхөн `listAvailableSlots`), 4) "Бараа дууссан үед орлуулж болно" checkbox (нэг удаа), 5) төлбөрийн арга. QPAY бол захиалгын дараа `startPayment` дуудаж QR + deep link харуулж, 3 секунд тутам `GET /api/orders/:id` шалгана; `CONFIRMED` болмогц амжилтын хуудас.
-  - Алдааны мессеж map: `OUT_OF_STOCK` → "Зарим бараа дууссан, сагсаа шалгана уу", `SLOT_FULL` → "Энэ цонх дүүрсэн, өөр цаг сонгоно уу", `BELOW_MINIMUM` → "Хамгийн бага захиалгын дүн {n}".
-  - "Дахин захиалах" товч: өмнөх захиалгын мөрүүдийг `setCartItem`-ээр сагсанд нэмнэ (нөөц хүрэхгүй бол байгаагаар).
-  - Нэвтрээгүй хэрэглэгч checkout руу орвол `/login?next=/checkout`.
+- [ ] **Step 3: Route-ууд ба adapter.** Route бүр: zod-оор оролтыг шалгах, Task 3–10-ын server функцийг дуудах, алдааг `{ error: "<CODE>" }` + зохих статус (400/401/404/409/429) болгох. `httpApi` нь `{ error }`-ийг `throw new Error(code)` болгож буцаана (frontend-ийн алдааны map-тай нэг кодтой). `phone` талбарыг клиентээс **итгэхгүй**: сервер session-ээс авна (`getSessionUserId`), `createOrder` дотор клиентийн `phone` талбарыг үл тооцно. `GET /api/orders/[id]` нь IDOR-ыг Task 8-ын дагуу шалгана.
 
-- [ ] **Step 5: Гараар шалгах** `npm run dev`; утсан хэмжээнд (390px) нүүр → бараа → сагс → login → checkout урсгалыг гүйцэтгэж, console алдаагүй эсэхийг харна.
+- [ ] **Step 4: Frontend-ийн нэвтрэлт.** `AuthContext` нь `NEXT_PUBLIC_API_MODE=http` үед `verifyOtp` хариунд cookie тохируулагдсан гэж үзэж, `localStorage["everly.session"]`-д зөвхөн `phone`-ыг (UI-д харуулахад) хадгална; бодит эрхийг сервер session шийднэ. Сагс: нэвтэрсний дараа `POST /api/cart`-аар локал сагсыг нэгтгэнэ (`mergeCarts`, сервер талд stock-оор хязгаарлана).
 
-- [ ] **Step 6:** `git commit -am "feat: storefront UI"`
+- [ ] **Step 5:** `NEXT_PUBLIC_API_MODE=http npx vitest run tests/contract && npx vitest run` → бүгд PASS.
+- [ ] **Step 6:** Commit `git commit -am "feat: HTTP api adapter, routes and shared contract tests"`
 
 ---
 
 ### Task 12: End-to-end тест ба нээхийн өмнөх шалгалт
+
+> Frontend plan-ийн Task 10-ын e2e-г `NEXT_PUBLIC_API_MODE=http` горимд, бодит DB-тэй дахин ажиллуулж, доорх нэмэлт тестүүдийг бичнэ.
 
 **Files:**
 - Create: `playwright.config.ts`, `tests/e2e/purchase.spec.ts`, `tests/e2e/admin.spec.ts`, `README.md`
