@@ -6,19 +6,15 @@
 
 **Технологи:** React, TypeScript, Vite
 
-## Багийн гишүүд
+## Багийн гишүүд ба ажлын хуваарь
 
-- Belgute
-- Odnoo
-- Ochiroo
+| Гишүүн | Хэсэг | Хариуцах зүйл | Хавтас, файл |
+|---|---|---|---|
+| Belgute | **А: Бараа** | Барааны жагсаалт, хайлт, ангиллын шүүлтүүр | `src/data/products.ts`, `src/pages/HomePage.tsx`, `src/components/ProductCard`, `SearchBar`, `CategoryChips` |
+| Odnoo | **Б: Сагс, захиалга** | Сагс, захиалгын form | `src/pages/CartPage.tsx`, `src/pages/CheckoutPage.tsx`, `src/components/CartItemRow`, `src/utils/validateCheckout.ts` |
+| Ochiroo | **В: Бүтэц, чат, утас** | Төслийн бүтэц, header, туслах чат, утсан дээрх харагдац | `src/App.tsx`, `src/main.tsx`, `src/types.ts`, `src/styles/`, `src/components/Header`, `ChatWidget`, `src/data/chatReplies.ts` |
 
-## Ажлын хуваарь
-
-| Хэсэг | Хариуцах зүйл | Хавтас, файл |
-|---|---|---|
-| **А: Бараа** | Барааны жагсаалт, хайлт, ангиллын шүүлтүүр | `src/data/products.ts`, `src/pages/HomePage.tsx`, `src/components/ProductCard`, `SearchBar`, `CategoryChips` |
-| **Б: Сагс, захиалга** | Сагс, захиалгын form | `src/pages/CartPage.tsx`, `src/pages/CheckoutPage.tsx`, `src/components/CartItemRow`, `src/utils/validateCheckout.ts` |
-| **В: Бүтэц, чат, утас** | Төслийн бүтэц, header, туслах чат, утсан дээрх харагдац | `src/App.tsx`, `src/main.tsx`, `src/types.ts`, `src/styles/`, `src/components/Header`, `ChatWidget`, `src/data/chatReplies.ts` |
+Хүн бүр зөвхөн өөрийн хэсгийн файл дээр ажиллана.
 
 Дэлгэрэнгүйг эндээс харна уу:
 - Дизайн: [`docs/superpowers-ari-od/specs/2026-10-14-everly-grocery-mvp-design.md`](docs/superpowers-ari-od/specs/2026-10-14-everly-grocery-mvp-design.md)
@@ -40,7 +36,8 @@ docs/           Дизайн ба төлөвлөгөөний баримтууд
 
 ## Хэрхэн ажиллуулах вэ
 
-1. **Node.js** суулгана. Хувилбар нь 20.19 эсвэл 22.12-оос дээш байх ёстой. Шалгах: `node -v`
+1. **Node.js** суулгана (nodejs.org-оос LTS). Хувилбар нь 20.19 эсвэл 22.12-оос дээш байх ёстой. Шалгах: `node -v`
+   Компьютер дээр admin эрхгүй бол nodejs.org-оос `win-x64.zip` хувилбарыг татаж, дурын хавтсанд задлаад, тэр хавтсыг `PATH`-д нэмж ашиглаж болно.
 2. Төслийг татна:
    ```bash
    git clone https://github.com/belgute97/Everly.mn.git
@@ -70,7 +67,7 @@ docs/           Дизайн ба төлөвлөгөөний баримтууд
 
 ```bash
 git switch main
-git pull
+git pull --rebase                # бусдын хамгийн сүүлийн ажлыг татна
 git switch -c <таны-branch>     # жишээ нь: a/products, b/cart, c/layout
 # ... код бичнэ ...
 git add <файлууд>
