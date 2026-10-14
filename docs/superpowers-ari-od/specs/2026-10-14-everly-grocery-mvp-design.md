@@ -43,9 +43,9 @@ src/
   components/Header.tsx        В  лого + сагсны badge
   components/ChatWidget.tsx    В  хөвөгч чат
   data/chatReplies.ts          В  түлхүүр үг → хариулт
+  utils/formatPrice.ts         В  12500 → "12,500₮" (А, Б хоёулаа Хичээл 1-д хэрэглэнэ)
 
   data/products.ts             А  12 mock бараа
-  utils/formatPrice.ts         А  12500 → "12,500₮"
   components/ProductCard.tsx   А
   components/SearchBar.tsx     А
   components/CategoryChips.tsx А
@@ -184,13 +184,16 @@ Sticky байна. Зүүн талд "Everly" лого (`/` руу), баруу�
 
 | Токен | Утга | Хэрэглээ |
 |---|---|---|
-| `--color-primary` | `#059669` | Лого, сонгосон чип, линк |
+| `--color-primary` | `#059669` | Focus хүрээ, жижиг чимэглэл |
+| `--color-primary-dark` | `#047857` | Лого, линк, сонгосон чип, чатын толгой (цагаан текст 5.5:1) |
+| `--color-on-primary` | `#FFFFFF` | `--color-primary-dark` дээрх текст |
 | `--color-background` | `#ECFDF5` | Хуудасны дэвсгэр |
 | `--color-card` | `#FFFFFF` | Карт, form |
 | `--color-foreground` | `#064E3B` | Үндсэн текст |
 | `--color-muted-foreground` | `#475569` | Нэгж, туслах текст |
 | `--color-border` | `#A7F3D0` | Хүрээ |
-| `--color-accent` | `#EA580C` | "Сагсанд нэмэх", "Захиалах" товч |
+| `--color-accent` | `#EA580C` | "Сагсанд нэмэх", "Захиалах" товч, badge |
+| `--color-on-accent` | `#1C1917` | Улбар шар товч дээрх текст (4.9:1). Цагаан текст 3.6:1 тул хэрэглэхгүй |
 | `--color-destructive` | `#DC2626` | Алдааны мессеж, "Устгах" |
 
 Товчны текстийн өнгийг тодосгогч (contrast) 4.5:1-ээс багагүй байхаар сонгоно. Component-ууд өнгийг зөвхөн токеноор авна, hex утгыг шууд бичихгүй.
@@ -209,7 +212,7 @@ Sticky байна. Зүүн талд "Everly" лого (`/` руу), баруу�
 
 | | А: Бараа | Б: Сагс, захиалга | В: Бүтэц, чат, утас |
 |---|---|---|---|
-| **Хичээл 1** | `products.ts`, `formatPrice`, `ProductCard`, `HomePage`-д жагсаалт харуулах | `CartItemRow`, `CartPage` (−/+, устгах, нийт дүн, хоосон төлөв) | Vite + React Router суулгах, `types.ts`, `App.tsx` + сагсны функцууд (эхний 15 мин), `variables.css`, фонт, `Header` |
+| **Хичээл 1** | `products.ts`, `ProductCard`, `HomePage`-д жагсаалт харуулах | `CartItemRow`, `CartPage` (−/+, устгах, нийт дүн, хоосон төлөв) | Vite + React Router суулгах, `types.ts`, `formatPrice`, `App.tsx` + сагсны функцууд (эхний 15 мин), `variables.css`, фонт, `Header` |
 | **Хичээл 2** | `SearchBar`, `CategoryChips`, шүүлтүүр, "олдсонгүй" төлөв | `CheckoutPage`: form, шалгалт, хураангуй, амжилтын мэдэгдэл | `ChatWidget` + `chatReplies`, 375px дээр бүх хуудсыг шалгаж засах |
 
 **Git:**
