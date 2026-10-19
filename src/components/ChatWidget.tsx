@@ -75,7 +75,7 @@ export default function ChatWidget() {
   return (
     <section className="chat-window" role="dialog" aria-label="Чат">
       <header className="chat-header">
-        <h2>Туслах</h2>
+        <h2>Туслах <small>· туршилтын чат</small></h2>
         <button type="button" className="chat-close" onClick={() => setOpen(false)} aria-label="Чат хаах">
           ✕
         </button>

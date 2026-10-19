@@ -11,7 +11,11 @@ export default function Header({ count }: { count: number }) {
           <circle cx="18" cy="20" r="1.5" />
           <path d="M2 3h3l2.7 11.4a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 7H6" />
         </svg>
-        {count > 0 && <span className="cart-badge">{count}</span>}
+        {count > 0 && (
+          <span className="cart-badge" key={count}>
+            {count}
+          </span>
+        )}
       </Link>
     </header>
   )

@@ -16,6 +16,11 @@ export default function SearchBox({ value, onChange }: Props) {
         placeholder="Бараа хайх..."
         onChange={(e) => onChange(e.target.value)}
       />
+      {value && (
+        <button type="button" className="search-clear" aria-label="Хайлт цэвэрлэх" onClick={() => onChange('')}>
+          ✕
+        </button>
+      )}
     </div>
   )
 }
