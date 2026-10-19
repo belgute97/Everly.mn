@@ -1,11 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import Icon from '../components/icons'
 import ProductImage from '../components/ProductImage'
+import Reviews from '../components/Reviews'
 import { products } from '../data/products'
+import { shop, useShop } from '../store/shop'
 import { formatPrice } from '../utils/formatPrice'
 import { discountPercent } from '../utils/promo'
 import NotFoundPage from './NotFoundPage'
 import './ProductDetailPage.css'
+import './Account.css'
 
 interface Props {
   getQty: (productId: string, size: string) => number
@@ -21,7 +25,13 @@ export default function ProductDetailPage({ getQty, onAdd }: Props) {
   const [flash, setFlash] = useState(false)
   const flashTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
+  const { saved } = useShop()
+
   useEffect(() => () => clearTimeout(flashTimer.current), [])
+
+  useEffect(() => {
+    if (id) shop.markViewed(id)
+  }, [id])
 
   if (!product) return <NotFoundPage title="Бараа олдсонгүй" />
 
@@ -45,6 +55,15 @@ export default function ProductDetailPage({ getQty, onAdd }: Props) {
         <div className="pd-media">
           <ProductImage src={product.image} alt={product.name} />
           {discount > 0 && <span className="badge-sale">-{discount}%</span>}
+          <button
+            type="button"
+            className={saved.includes(product.id) ? 'fav-btn active' : 'fav-btn'}
+            aria-pressed={saved.includes(product.id)}
+            aria-label={`Хадгалах: ${product.name}`}
+            onClick={() => shop.toggleSaved(product.id)}
+          >
+            <Icon name="heart" size={22} />
+          </button>
         </div>
         <div className="pd-info">
           <h1>{product.name}</h1>
@@ -96,6 +115,7 @@ export default function ProductDetailPage({ getQty, onAdd }: Props) {
           </p>
         </div>
       </div>
+      <Reviews productId={product.id} />
     </article>
   )
 }

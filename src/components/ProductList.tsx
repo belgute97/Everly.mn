@@ -4,6 +4,8 @@ import { categories } from '../data/categories'
 import { formatPrice } from '../utils/formatPrice'
 import { discountPercent } from '../utils/promo'
 import type { Product } from '../types'
+import { shop, useShop } from '../store/shop'
+import Icon from './icons'
 import ProductImage from './ProductImage'
 
 interface Props {
@@ -15,6 +17,7 @@ interface Props {
 }
 
 export default function ProductList({ products, getQty, onAdd, onSetQuantity, onReset }: Props) {
+  const { saved } = useShop()
   if (products.length === 0) {
     return (
       <div className="center-page">
@@ -43,6 +46,15 @@ export default function ProductList({ products, getQty, onAdd, onSetQuantity, on
               ) : discount > 0 ? (
                 <span className="badge-sale">-{discount}%</span>
               ) : null}
+              <button
+                type="button"
+                className={saved.includes(p.id) ? 'fav-btn active' : 'fav-btn'}
+                aria-pressed={saved.includes(p.id)}
+                aria-label={`Хадгалах: ${p.name}`}
+                onClick={() => shop.toggleSaved(p.id)}
+              >
+                <Icon name="heart" size={20} />
+              </button>
             </div>
             <Link to={`/products/${p.id}`} className="card-body">
               {categoryName && <p className="card-cat">{categoryName}</p>}

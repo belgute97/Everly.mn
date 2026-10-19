@@ -10,6 +10,14 @@ interface Props {
   saleCount: number
 }
 
+const ACCOUNT_LINKS = [
+  { to: '/profile', icon: 'user', label: 'Миний профайл' },
+  { to: '/saved', icon: 'heart', label: 'Хадгалсан бараа' },
+  { to: '/viewed', icon: 'clock', label: 'Үзсэн бараа' },
+  { to: '/wallet', icon: 'wallet', label: 'Хэтэвч' },
+  { to: '/help', icon: 'help', label: 'Тусламж' },
+]
+
 export default function SideMenu({ open, onClose, saleCount }: Props) {
   const location = useLocation()
   const group = new URLSearchParams(location.search).get('group')
@@ -65,6 +73,15 @@ export default function SideMenu({ open, onClose, saleCount }: Props) {
                 >
                   <Icon name={g.icon} />
                   <span>{g.name}</span>
+                </Link>
+              </li>
+            ))}
+            <li className="side-divider" role="presentation" />
+            {ACCOUNT_LINKS.map((l) => (
+              <li key={l.to}>
+                <Link to={l.to} className={cls(location.pathname === l.to)} onClick={onClose}>
+                  <Icon name={l.icon} />
+                  <span>{l.label}</span>
                 </Link>
               </li>
             ))}

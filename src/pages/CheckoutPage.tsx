@@ -8,8 +8,10 @@ import {
   type OrderErrors,
   type OrderForm,
 } from '../utils/validateOrder'
+import { shop, useShop } from '../store/shop'
 import type { CartItem } from '../types'
 import './CheckoutPage.css'
+import './Account.css'
 
 const EMPTY: OrderForm = { name: '', phone: '', address: '', date: '' }
 
@@ -33,10 +35,14 @@ interface Done {
   lines: Line[]
   total: number
   date: string
+  paidWithWallet: boolean
 }
 
 export default function CheckoutPage({ items, onClear }: { items: CartItem[]; onClear: () => void }) {
-  const [form, setForm] = useState<OrderForm>(EMPTY)
+  const { profile, balance } = useShop()
+  const [form, setForm] = useState<OrderForm>({ ...EMPTY, name: profile.name, phone: profile.phone, address: profile.address })
+  const [payment, setPayment] = useState<'cash' | 'wallet'>('cash')
+  const [payError, setPayError] = useState<string | null>(null)
   const [errors, setErrors] = useState<OrderErrors>({})
   const [sending, setSending] = useState(false)
   const [done, setDone] = useState<Done | null>(null)
@@ -63,7 +69,7 @@ export default function CheckoutPage({ items, onClear }: { items: CartItem[]; on
         <h1 ref={doneHeading} tabIndex={-1} role="status">
           Захиалга №{done.orderNo} амжилттай
         </h1>
-        <p className="muted">Хүргэлтийн өдөр: {done.date}</p>
+        <p className="muted">Хүргэлтийн өдөр: {done.date} · Төлбөр: {done.paidWithWallet ? 'Хэтэвчээр' : 'Хүргэлтээр бэлнээр'}</p>
         <ul className="summary-list">
           {done.lines.map((l) => (
             <li key={l.id}>
@@ -100,10 +106,22 @@ export default function CheckoutPage({ items, onClear }: { items: CartItem[]; on
       document.getElementById(first.key)?.focus()
       return
     }
+    if (payment === 'wallet' && total > balance) {
+      setPayError('Хэтэвчний үлдэгдэл хүрэлцэхгүй байна')
+      return
+    }
+    setPayError(null)
     setSending(true)
     // Жинхэнэ төлбөр, backend байхгүй: түр хүлээгээд амжилттай гэж харуулна
     timer.current = setTimeout(() => {
-      setDone({ orderNo: 100000 + Math.floor(Math.random() * 900000), lines, total, date: form.date })
+      const orderNo = 100000 + Math.floor(Math.random() * 900000)
+      // Хугацаанд хэтэвчний үлдэгдэл өөрчлөгдсөн байж болзошгүй тул дахин шалгана
+      if (payment === 'wallet' && !shop.pay(total, `Захиалга №${orderNo}`)) {
+        setSending(false)
+        setPayError('Хэтэвчний үлдэгдэл хүрэлцэхгүй байна')
+        return
+      }
+      setDone({ orderNo, lines, total, date: form.date, paidWithWallet: payment === 'wallet' })
       onClear()
     }, 1000)
   }
@@ -153,6 +171,18 @@ export default function CheckoutPage({ items, onClear }: { items: CartItem[]; on
           )}
         </div>
       ))}
+      <fieldset className="pay-options" disabled={sending}>
+        <legend>Төлбөрийн хэлбэр</legend>
+        <label>
+          <input type="radio" name="payment" checked={payment === 'cash'} onChange={() => { setPayment('cash'); setPayError(null) }} />
+          Хүргэлтээр бэлнээр
+        </label>
+        <label>
+          <input type="radio" name="payment" checked={payment === 'wallet'} onChange={() => setPayment('wallet')} />
+          Хэтэвчээр төлөх (үлдэгдэл {formatPrice(balance)})
+        </label>
+        {payError && <p className="field-error" role="alert">{payError} · <Link to="/wallet">Цэнэглэх</Link></p>}
+      </fieldset>
       <button type="submit" className="btn-primary submit" disabled={sending}>
         {sending ? 'Илгээж байна…' : 'Захиалах'}
       </button>
