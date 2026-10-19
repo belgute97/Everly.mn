@@ -48,7 +48,7 @@ export default function ProfilePage() {
 
   const clearAll = () => {
     shop.clearAll()
-    setForm({ name: '', phone: '', address: '', email: '', birthday: '' })
+    setForm({ name: '', phone: '', address: '', email: '', birthday: '', birthdayConfirmed: false })
     setConfirmClear(false)
     setOk(false)
   }

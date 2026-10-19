@@ -99,6 +99,18 @@ const PATHS: Record<string, React.ReactNode> = {
       <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
     </>
   ),
+  zodiac: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="m12 6 1.8 4.2 4.2.3-3.2 2.8 1 4.2L12 15.2 8.2 17.5l1-4.2L6 10.5l4.2-.3L12 6z" />
+    </>
+  ),
+  game: (
+    <>
+      <rect x="2" y="7" width="20" height="11" rx="4" />
+      <path d="M7 10v5M4.5 12.5h5M15.5 11h.01M18 14h.01" />
+    </>
+  ),
   pause: <path d="M8 5v14M16 5v14" />,
   play: <path d="M7 5l12 7-12 7V5z" />,
   arrowLeft: <path d="M15 6l-6 6 6 6" />,
