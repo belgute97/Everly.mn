@@ -152,3 +152,38 @@
   font-weight: 500;
   opacity: 0.9;
 }
+
+.chat-fab {
+  transition: transform 0.25s var(--ease), box-shadow 0.25s;
+}
+
+.chat-fab:hover {
+  transform: scale(1.08) rotate(-6deg);
+  box-shadow: 0 10px 28px rgba(31, 77, 58, 0.45);
+}
+
+.chat-fab:active {
+  transform: scale(0.94);
+}
+
+.chat-window {
+  animation: chat-in 0.35s var(--ease);
+}
+
+.chat-bubble {
+  animation: bubble-in 0.3s var(--ease);
+}
+
+@keyframes chat-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+}
+
+@keyframes bubble-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.95);
+  }
+}

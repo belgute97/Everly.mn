@@ -1,5 +1,8 @@
-// Барааны ангилал: ногоо, мах, цагаан идээ
-export type Category = 'vegetables' | 'meat' | 'dairy'
+// Барааны ангилал
+export type Category = 'vegetables' | 'meat' | 'dairy' | 'women' | 'men' | 'kids' | 'kitchen'
+
+// Үндсэн бүлэг: хүнс нь гурван дэд ангилалтай, бусад нь тус бүр нэг ангилалтай
+export type Group = 'food' | 'women' | 'men' | 'kids' | 'kitchen'
 
 export interface Product {
   id: string // давтагдахгүй англи нэр, жишээ нь "potato"

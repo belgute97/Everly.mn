@@ -18,7 +18,7 @@ export default function CartItemRow({ item, product, max, onSetQuantity, onRemov
       <ProductImage src={product.image} alt="" className="cart-img" />
       <div className="cart-info">
         <h3>{product.name}</h3>
-        <p className="cart-size">Размер: {size}</p>
+        {product.sizes.length > 1 && <p className="cart-size">Размер: {size}</p>}
         <p className="price">{formatPrice(product.price * quantity)}</p>
         <div className="cart-controls">
           <div className="stepper" role="group" aria-label="Тоо">

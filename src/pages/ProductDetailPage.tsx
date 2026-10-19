@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import ProductImage from '../components/ProductImage'
 import { products } from '../data/products'
@@ -17,6 +17,10 @@ export default function ProductDetailPage({ getQty, onAdd }: Props) {
   const location = useLocation()
   const product = products.find((p) => p.id === id)
   const [size, setSize] = useState<string | null>(null)
+  const [flash, setFlash] = useState(false)
+  const flashTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+
+  useEffect(() => () => clearTimeout(flashTimer.current), [])
 
   if (!product) return <NotFoundPage title="Бараа олдсонгүй" />
 
@@ -39,6 +43,8 @@ export default function ProductDetailPage({ getQty, onAdd }: Props) {
       <h1>{product.name}</h1>
       <p className="price">{formatPrice(product.price)}</p>
       <p>{product.description}</p>
+      {product.sizes.length > 1 && (
+        <>
       <p className="size-label" id="size-label">Размер сонгох</p>
       <div className="size-options" role="group" aria-labelledby="size-label">
         {product.sizes.map((s) => (
@@ -54,9 +60,21 @@ export default function ProductDetailPage({ getQty, onAdd }: Props) {
         ))}
       </div>
       <p className="muted size-hint">Үнэ бүх размерт ижил.</p>
+        </>
+      )}
       {soldOut && <p className="sold-out">Дууссан</p>}
-      <button type="button" className="add-to-cart" disabled={soldOut} onClick={() => onAdd(product.id, selected)}>
-        Сагсанд нэмэх
+      <button
+        type="button"
+        className={flash ? 'add-to-cart is-added' : 'add-to-cart'}
+        disabled={soldOut}
+        onClick={() => {
+          onAdd(product.id, selected)
+          setFlash(true)
+          clearTimeout(flashTimer.current)
+          flashTimer.current = setTimeout(() => setFlash(false), 1500)
+        }}
+      >
+        {flash ? '✓ Нэмэгдлээ' : 'Сагсанд нэмэх'}
       </button>
       <p className="added-note" role="status">
         {inCart > 0 && (

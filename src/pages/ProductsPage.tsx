@@ -2,9 +2,9 @@ import { useSearchParams } from 'react-router-dom'
 import CategoryFilter from '../components/CategoryFilter'
 import ProductList from '../components/ProductList'
 import SearchBox from '../components/SearchBox'
-import { categories } from '../data/categories'
+import { categories, categoriesOf, groups } from '../data/categories'
 import { products } from '../data/products'
-import type { Category } from '../types'
+import type { Category, Group } from '../types'
 import { filterProducts } from '../utils/filterProducts'
 
 interface Props {
@@ -14,40 +14,56 @@ interface Props {
 }
 
 export default function ProductsPage({ getQty, onAdd, onSetQuantity }: Props) {
-  // Хайлт, ангиллыг URL-д хадгална: дэлгэрэнгүй хуудаснаас буцахад алдагдахгүй
+  // Хайлт, бүлэг, ангиллыг URL-д хадгална: дэлгэрэнгүй хуудаснаас буцахад, цэснээс орхад ажиллана
   const [params, setParams] = useSearchParams()
   const query = params.get('q') ?? ''
-  const cat = params.get('cat')
-  const category = categories.find((c) => c.id === cat)?.id ?? null
+  const group = groups.find((g) => g.id === params.get('group'))?.id ?? null
+  const sub = group === 'food' ? (categories.find((c) => c.id === params.get('cat') && c.group === 'food')?.id ?? null) : null
 
-  const update = (next: { q?: string; cat?: Category | null }) => {
-    const p = new URLSearchParams(params)
+  const update = (next: { q?: string; group?: Group | null; sub?: Category | null }) => {
     const q = next.q ?? query
-    const c = next.cat === undefined ? category : next.cat
+    const g = next.group === undefined ? group : next.group
+    const s = next.group !== undefined ? null : next.sub === undefined ? sub : next.sub
+    const p = new URLSearchParams()
     if (q) p.set('q', q)
-    else p.delete('q')
-    if (c) p.set('cat', c)
-    else p.delete('cat')
+    if (g) p.set('group', g)
+    if (s) p.set('cat', s)
     setParams(p, { replace: true })
   }
 
-  const visible = filterProducts(products, category, query)
+  const allowed = sub ? [sub] : group ? categoriesOf(group) : null
+  const visible = filterProducts(products, allowed, query)
 
   return (
     <>
       <section className="hero">
-        <h1>Шинэхэн хүнс гэрт тань</h1>
-        <p>Ногоо, мах, цагаан идээг сонгоод сагсандаа нэмээрэй.</p>
+        <h1>Хүнс, хувцас, гал тогоо нэг дор</h1>
+        <p>Хэрэгтэй бүхнээ сонгоод сагсандаа нэмээрэй: хүнс, эмэгтэй, эрэгтэй, хүүхдийн хувцас, гал тогооны хэрэгсэл.</p>
+        <button
+          type="button"
+          className="btn-primary"
+          onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
+        >
+          Бараа үзэх
+        </button>
+        <ul className="hero-points">
+          {groups.map((g) => (
+            <li key={g.id}>{g.name}</li>
+          ))}
+        </ul>
       </section>
-      <SearchBox value={query} onChange={(q) => update({ q })} />
-      <CategoryFilter selected={category} onSelect={(c) => update({ cat: c })} />
-      <ProductList
-        products={visible}
-        getQty={getQty}
-        onAdd={onAdd}
-        onSetQuantity={onSetQuantity}
-        onReset={() => setParams({}, { replace: true })}
-      />
+      <div id="products">
+        <SearchBox value={query} onChange={(q) => update({ q })} />
+        <CategoryFilter group={group} sub={sub} onGroup={(g) => update({ group: g })} onSub={(s) => update({ sub: s })} />
+        <p className="result-count" aria-live="polite">{visible.length} бараа</p>
+        <ProductList
+          products={visible}
+          getQty={getQty}
+          onAdd={onAdd}
+          onSetQuantity={onSetQuantity}
+          onReset={() => setParams({}, { replace: true })}
+        />
+      </div>
     </>
   )
 }

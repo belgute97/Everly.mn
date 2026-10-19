@@ -1,7 +1,8 @@
 import type { Product } from '../types'
+import { extraProducts } from './extraProducts'
 
 // Жишээ (mock) бараа. Ангилал бүрт 4, нийт 12. Дууссан нь: байцаа, тахианы мах.
-export const products: Product[] = [
+const groceryProducts: Product[] = [
   // Ногоо
   {
     id: 'potato',
@@ -128,3 +129,5 @@ export const products: Product[] = [
     sizes: ['500 г × 4', '1 кг × 2'],
   },
 ]
+
+export const products: Product[] = [...groceryProducts, ...extraProducts]
