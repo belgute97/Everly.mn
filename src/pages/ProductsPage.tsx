@@ -3,9 +3,10 @@ import CategoryFilter from '../components/CategoryFilter'
 import ProductList from '../components/ProductList'
 import PromoRail from '../components/PromoRail'
 import SearchBox from '../components/SearchBox'
-import { categories, categoriesOf, groups } from '../data/categories'
+import { categoriesOf, groups } from '../data/categories'
+import { productSub, subcategories } from '../data/subcategories'
 import { products } from '../data/products'
-import type { Category, Group } from '../types'
+import type { Group } from '../types'
 import { filterProducts } from '../utils/filterProducts'
 import { isPromo } from '../utils/promo'
 
@@ -21,22 +22,22 @@ export default function ProductsPage({ getQty, onAdd, onSetQuantity, saleOnly = 
   const [params, setParams] = useSearchParams()
   const query = params.get('q') ?? ''
   const group = groups.find((g) => g.id === params.get('group'))?.id ?? null
-  const sub = group === 'food' ? (categories.find((c) => c.id === params.get('cat') && c.group === 'food')?.id ?? null) : null
+  const sub = group ? (subcategories[group].find((s) => s.id === params.get('sub'))?.id ?? null) : null
 
-  const update = (next: { q?: string; group?: Group | null; sub?: Category | null }) => {
+  const update = (next: { q?: string; group?: Group | null; sub?: string | null }) => {
     const q = next.q ?? query
     const g = next.group === undefined ? group : next.group
     const s = next.group !== undefined ? null : next.sub === undefined ? sub : next.sub
     const p = new URLSearchParams()
     if (q) p.set('q', q)
     if (g) p.set('group', g)
-    if (s) p.set('cat', s)
+    if (s) p.set('sub', s)
     setParams(p, { replace: true })
   }
 
   const source = saleOnly ? products.filter(isPromo) : products
-  const allowed = sub ? [sub] : group ? categoriesOf(group) : null
-  const visible = filterProducts(source, allowed, query)
+  const allowed = group ? categoriesOf(group) : null
+  const visible = filterProducts(source, allowed, query).filter((p) => !sub || productSub[p.id] === sub)
 
   return (
     <>

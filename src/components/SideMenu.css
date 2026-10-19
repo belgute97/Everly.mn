@@ -166,3 +166,92 @@
     display: none;
   }
 }
+
+/* Задарч харагддаг бүлэг */
+button.side-link {
+  width: 100%;
+  font: inherit;
+  font-weight: 500;
+  text-align: left;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+button.side-link.active {
+  font-weight: 600;
+}
+
+.side-toggle > span {
+  flex: 1;
+}
+
+.side-toggle > .icon:last-child {
+  margin-left: auto;
+  opacity: 0.6;
+}
+
+.side-toggle[aria-expanded='true'] > .icon:last-child {
+  transform: rotate(180deg);
+}
+
+.side-sub {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s var(--ease);
+}
+
+.side-sub.open {
+  grid-template-rows: 1fr;
+}
+
+.side-sub > ul {
+  min-height: 0;
+  margin: 0;
+  padding: 0 0 0 22px;
+  overflow: hidden;
+  list-style: none;
+}
+
+.side-sub.open > ul {
+  margin: 4px 0 6px;
+  padding-left: 22px;
+  border-left: 2px solid var(--color-tint);
+  margin-left: 24px;
+  padding-left: 10px;
+}
+
+.side-sublink {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 40px;
+  padding: 0 12px;
+  font-size: 0.9375rem;
+  color: var(--color-fg);
+  text-decoration: none;
+  border-radius: 12px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.side-sublink small {
+  color: var(--color-muted-fg);
+  font-size: 0.8125rem;
+}
+
+.side-sublink:hover {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.side-sublink.active {
+  font-weight: 600;
+  color: var(--color-primary);
+  background: rgba(10, 92, 184, 0.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .side-sub {
+    transition: none;
+  }
+}

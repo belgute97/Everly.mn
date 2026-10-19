@@ -1,18 +1,21 @@
-import { categories, categoriesOf, groups } from '../data/categories'
+import { categoriesOf, groups } from '../data/categories'
+import { productSub, subcategories } from '../data/subcategories'
 import type { Category, Group, Product } from '../types'
 
 interface Props {
   source: Product[] // тоог бодох бараанууд (бүгд эсвэл зөвхөн хямдралтай)
   group: Group | null
-  sub: Category | null
+  sub: string | null
   onGroup: (group: Group | null) => void
-  onSub: (sub: Category | null) => void
+  onSub: (sub: string | null) => void
 }
 
 export default function CategoryFilter({ source, group, sub, onGroup, onSub }: Props) {
   const countIn = (allowed: Category[] | null) =>
     allowed === null ? source.length : source.filter((p) => allowed.includes(p.category)).length
-  const subs = group === 'food' ? categories.filter((c) => c.group === 'food') : []
+  const subs = group ? subcategories[group] : []
+  const subCount = (id: string) => source.filter((p) => productSub[p.id] === id).length
+  const groupName = groups.find((g) => g.id === group)?.name
   return (
     <>
       <div className="chips" role="group" aria-label="Бүлэг">
@@ -32,9 +35,9 @@ export default function CategoryFilter({ source, group, sub, onGroup, onSub }: P
         ))}
       </div>
       {subs.length > 0 && (
-        <div className="chips chips-sub" role="group" aria-label="Хүнсний ангилал">
+        <div className="chips chips-sub" role="group" aria-label={`${groupName}: дэд бүлэг`}>
           <button type="button" className={sub === null ? 'chip chip-active' : 'chip'} aria-pressed={sub === null} onClick={() => onSub(null)}>
-            Бүх хүнс
+            Бүгд
           </button>
           {subs.map((c) => (
             <button
@@ -44,7 +47,7 @@ export default function CategoryFilter({ source, group, sub, onGroup, onSub }: P
               aria-pressed={c.id === sub}
               onClick={() => onSub(c.id)}
             >
-              {c.name}
+              {c.name} <span className="chip-count">{subCount(c.id)}</span>
             </button>
           ))}
         </div>
