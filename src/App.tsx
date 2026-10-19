@@ -3,6 +3,7 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 import AdBanner from './components/AdBanner'
 import ChatWidget from './components/ChatWidget'
 import ContactInfo from './components/ContactInfo'
+import ParticlesBackground from './components/ParticlesBackground'
 import Header from './components/Header'
 import SideMenu from './components/SideMenu'
 import Toast, { type ToastData } from './components/Toast'
@@ -57,6 +58,7 @@ function App() {
 
   return (
     <div className="shell">
+      <ParticlesBackground />
       <SideMenu open={menuOpen} onClose={closeMenu} saleCount={saleCount} />
       <main className="app">
         <AdBanner />
