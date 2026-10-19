@@ -1,0 +1,113 @@
+/* Харанхуй горим: өнгөний хувьсагчийг солиод, хатуу өнгөтэй хэсгүүдийг засна */
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg: #0b1220;
+  --color-card: #151f33;
+  --color-fg: #e8edf6;
+  --color-muted-fg: #a3afc4;
+  --color-border: #2a3750;
+  --color-input-border: #6b7a95;
+  --color-tint: #1d2a44;
+  --color-primary: #5aa2ff;
+  --color-primary-dark: #3d86e6;
+  --color-on-primary: #08111f;
+  --color-gold: #ffc83d;
+  --color-gold-dark: #f2b705;
+  --color-on-gold: #0f1b2d;
+  --color-accent: #ff5a70;
+  --color-sale-text: #ff8a9a;
+  --color-danger: #ff7b7b;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 14px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+:root[data-theme='dark'] body {
+  background:
+    radial-gradient(900px 520px at 4% -8%, rgba(90, 162, 255, 0.12), transparent 60%),
+    radial-gradient(700px 440px at 100% 6%, rgba(255, 200, 61, 0.06), transparent 60%),
+    var(--color-bg);
+  background-attachment: fixed, fixed, scroll;
+}
+
+[data-theme='dark'] .site-header.scrolled {
+  background: rgba(11, 18, 32, 0.8);
+}
+
+[data-theme='dark'] .side-menu {
+  background: linear-gradient(160deg, rgba(27, 38, 61, 0.86), rgba(15, 24, 42, 0.7));
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+[data-theme='dark'] .side-link:hover,
+[data-theme='dark'] .side-sublink:hover,
+[data-theme='dark'] .side-close:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme='dark'] .side-sublink.active {
+  background: rgba(90, 162, 255, 0.18);
+}
+
+[data-theme='dark'] .side-link.active {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme='dark'] .chip-active {
+  color: var(--color-bg);
+}
+
+[data-theme='dark'] .promo-nav button {
+  background: rgba(21, 31, 51, 0.8);
+}
+
+[data-theme='dark'] .promo-nav button:hover {
+  background: var(--color-card);
+}
+
+[data-theme='dark'] .fav-btn {
+  color: #0f1b2d;
+}
+
+[data-theme='dark'] .fav-btn.active {
+  color: #d7263d;
+}
+
+[data-theme='dark'] .error-summary {
+  background: #3a1518;
+}
+
+[data-theme='dark'] .form-ok {
+  color: #bbf7d0;
+  background: #0f2a1a;
+}
+
+[data-theme='dark'] .tx-plus {
+  color: #4ade80;
+}
+
+[data-theme='dark'] .promo-chip {
+  color: #ffd877;
+  background: rgba(255, 200, 61, 0.16);
+}
+
+[data-theme='dark'] .product-img:not(.is-loaded) {
+  background: linear-gradient(100deg, #1d2a44 30%, #26365a 50%, #1d2a44 70%) 0 0 / 300% 100%;
+}
+
+[data-theme='dark'] .chat-window,
+[data-theme='dark'] .chat-retry {
+  background: var(--color-card);
+}
+
+[data-theme='dark'] .chat-fab,
+[data-theme='dark'] .chat-header,
+[data-theme='dark'] .chat-user,
+[data-theme='dark'] .cart-badge,
+[data-theme='dark'] .side-badge {
+  color: #08111f;
+}

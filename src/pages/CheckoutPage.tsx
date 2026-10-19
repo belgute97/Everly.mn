@@ -121,6 +121,14 @@ export default function CheckoutPage({ items, onClear }: { items: CartItem[]; on
         setPayError('Хэтэвчний үлдэгдэл хүрэлцэхгүй байна')
         return
       }
+      shop.addOrder({
+        id: String(orderNo),
+        date: new Date().toISOString(),
+        deliveryDate: form.date,
+        lines: lines.map((l) => ({ name: l.name, size: l.size, quantity: l.quantity, total: l.total })),
+        total,
+        payment,
+      })
       setDone({ orderNo, lines, total, date: form.date, paidWithWallet: payment === 'wallet' })
       onClear()
     }, 1000)

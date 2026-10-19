@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { toggleTheme, useTheme } from '../hooks/useTheme'
 import Icon from './icons'
 import './Header.css'
 
@@ -11,6 +12,7 @@ interface Props {
 // Дээд мөр: утсан дээр цэсийн товч, лого; компьютер дээр зөвхөн сагс (цэс нь зүүн талд)
 export default function Header({ count, onMenu }: Props) {
   const [scrolled, setScrolled] = useState(false)
+  const theme = useTheme()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -28,7 +30,15 @@ export default function Header({ count, onMenu }: Props) {
         <Icon name="leaf" size={26} />
         Everly
       </Link>
-      <Link to="/saved" className="cart-link" aria-label="Хадгалсан бараа">
+      <button
+        type="button"
+        className="cart-link theme-btn"
+        aria-label={theme === 'dark' ? 'Цайвар горим руу шилжих' : 'Харанхуй горим руу шилжих'}
+        onClick={toggleTheme}
+      >
+        <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={24} />
+      </button>
+      <Link to="/saved" className="cart-link header-fav" aria-label="Хадгалсан бараа">
         <Icon name="heart" size={24} />
       </Link>
       <Link to="/profile" className="cart-link" aria-label="Миний профайл">

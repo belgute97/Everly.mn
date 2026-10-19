@@ -1,0 +1,78 @@
+.cat-banner {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: 220px;
+  margin: 8px 0 20px;
+  overflow: hidden;
+  color: #fff;
+  background: linear-gradient(135deg, #0a5cb8, #06336b);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+}
+
+.cat-banner-food { background: linear-gradient(135deg, #1f8a4c, #0d4a28); }
+.cat-banner-women { background: linear-gradient(135deg, #b4306b, #5b1038); }
+.cat-banner-men { background: linear-gradient(135deg, #1e3a5f, #0b1a2e); }
+.cat-banner-kids { background: linear-gradient(135deg, #e08a1e, #8f4f08); }
+.cat-banner-kitchen { background: linear-gradient(135deg, #c0392b, #6e1a12); }
+.cat-banner-appliances { background: linear-gradient(135deg, #5b3fa8, #2c1c66); }
+.cat-banner-tech { background: linear-gradient(135deg, #0a5cb8, #06336b); }
+
+.cat-banner-img {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 55%;
+  height: 100%;
+  object-fit: cover;
+  mask-image: linear-gradient(to right, transparent, #000 45%);
+}
+
+.cat-banner-text {
+  position: relative;
+  max-width: 60%;
+  padding: 24px;
+}
+
+.cat-banner-text h2 {
+  margin: 4px 0;
+  font-size: clamp(1.5rem, 5vw, 2.25rem);
+  line-height: 1.1;
+}
+
+.cat-banner-text p {
+  margin: 0 0 12px;
+}
+
+.cat-banner-kicker {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.cat-banner-cta {
+  display: inline-block;
+  padding: 10px 18px;
+  font-weight: 700;
+  color: var(--color-on-gold);
+  text-decoration: none;
+  background: var(--color-gold);
+  border-radius: 999px;
+}
+
+.cat-banner-note {
+  display: inline-block;
+  padding: 6px 14px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+}
+
+@media (min-width: 640px) {
+  .cat-banner {
+    min-height: 280px;
+  }
+}

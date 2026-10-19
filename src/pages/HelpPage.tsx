@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import ContactInfo from '../components/ContactInfo'
 import './Account.css'
 
 const FAQ = [
@@ -22,6 +23,7 @@ export default function HelpPage() {
           </details>
         ))}
       </div>
+      <ContactInfo />
       <p className="muted">
         Хариулт олдохгүй бол баруун доод буланд байгаа чатаар асуугаарай. <Link to="/">Дэлгүүр рүү буцах</Link>
       </p>

@@ -1,0 +1,56 @@
+.ad-banner {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 0 -16px;
+  padding: 8px 8px 8px 16px;
+  color: var(--color-on-gold);
+  background: linear-gradient(90deg, var(--color-gold), #ffe08a);
+}
+
+@media (min-width: 640px) {
+  .ad-banner {
+    margin-inline: -24px;
+    padding-inline: 24px 12px;
+  }
+}
+
+.ad-banner p {
+  flex: 1;
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+.ad-banner code {
+  padding: 1px 6px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.55);
+  border-radius: 6px;
+}
+
+.ad-link {
+  flex: none;
+  padding: 6px 14px;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  background: #0f1b2d;
+  border-radius: 999px;
+}
+
+.ad-close {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: inherit;
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.ad-close:hover {
+  background: rgba(15, 27, 45, 0.12);
+}

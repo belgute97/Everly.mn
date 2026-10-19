@@ -1,4 +1,5 @@
 import { useSearchParams } from 'react-router-dom'
+import CategoryBanner from '../components/CategoryBanner'
 import CategoryFilter from '../components/CategoryFilter'
 import ProductList from '../components/ProductList'
 import PromoRail from '../components/PromoRail'
@@ -63,6 +64,7 @@ export default function ProductsPage({ getQty, onAdd, onSetQuantity, saleOnly = 
       <div id="products">
         <SearchBox value={query} onChange={(q) => update({ q })} />
         <CategoryFilter source={source} group={group} sub={sub} onGroup={(g) => update({ group: g })} onSub={(s) => update({ sub: s })} />
+        {group && sub && <CategoryBanner group={group} subId={sub} />}
         <p className="result-count" aria-live="polite">{visible.length} бараа</p>
         <ProductList
           products={visible}
