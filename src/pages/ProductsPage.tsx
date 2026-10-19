@@ -1,19 +1,22 @@
 import { useSearchParams } from 'react-router-dom'
 import CategoryFilter from '../components/CategoryFilter'
 import ProductList from '../components/ProductList'
+import PromoRail from '../components/PromoRail'
 import SearchBox from '../components/SearchBox'
 import { categories, categoriesOf, groups } from '../data/categories'
 import { products } from '../data/products'
 import type { Category, Group } from '../types'
 import { filterProducts } from '../utils/filterProducts'
+import { isPromo } from '../utils/promo'
 
 interface Props {
   getQty: (productId: string, size: string) => number
   onAdd: (productId: string, size: string) => void
   onSetQuantity: (productId: string, size: string, quantity: number) => void
+  saleOnly?: boolean // true бол зөвхөн хямдралтай, урамшуулалтай бараа
 }
 
-export default function ProductsPage({ getQty, onAdd, onSetQuantity }: Props) {
+export default function ProductsPage({ getQty, onAdd, onSetQuantity, saleOnly = false }: Props) {
   // Хайлт, бүлэг, ангиллыг URL-д хадгална: дэлгэрэнгүй хуудаснаас буцахад, цэснээс орхад ажиллана
   const [params, setParams] = useSearchParams()
   const query = params.get('q') ?? ''
@@ -31,30 +34,34 @@ export default function ProductsPage({ getQty, onAdd, onSetQuantity }: Props) {
     setParams(p, { replace: true })
   }
 
+  const source = saleOnly ? products.filter(isPromo) : products
   const allowed = sub ? [sub] : group ? categoriesOf(group) : null
-  const visible = filterProducts(products, allowed, query)
+  const visible = filterProducts(source, allowed, query)
 
   return (
     <>
-      <section className="hero">
-        <h1>Хүнс, хувцас, гал тогоо нэг дор</h1>
-        <p>Хэрэгтэй бүхнээ сонгоод сагсандаа нэмээрэй: хүнс, эмэгтэй, эрэгтэй, хүүхдийн хувцас, гал тогооны хэрэгсэл.</p>
-        <button
-          type="button"
-          className="btn-primary"
-          onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
-        >
-          Бараа үзэх
-        </button>
-        <ul className="hero-points">
-          {groups.map((g) => (
-            <li key={g.id}>{g.name}</li>
-          ))}
-        </ul>
-      </section>
+      {saleOnly ? (
+        <section className="hero sale-hero">
+          <h1>Хямдрал, урамшуулал</h1>
+          <p>Зөвхөн хямдралтай болон урамшуулалтай бараанууд: {source.length} бараа.</p>
+        </section>
+      ) : (
+        <section className="hero">
+          <h1>Хүнс, хувцас, технологи нэг дор</h1>
+          <p>Хэрэгтэй бүхнээ сонгоод сагсандаа нэмээрэй: хүнс, хувцас, гал тогоо, цахилгаан бараа, технологи.</p>
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
+          >
+            Бараа үзэх
+          </button>
+        </section>
+      )}
+      {!saleOnly && query === '' && !group && <PromoRail />}
       <div id="products">
         <SearchBox value={query} onChange={(q) => update({ q })} />
-        <CategoryFilter group={group} sub={sub} onGroup={(g) => update({ group: g })} onSub={(s) => update({ sub: s })} />
+        <CategoryFilter source={source} group={group} sub={sub} onGroup={(g) => update({ group: g })} onSub={(s) => update({ sub: s })} />
         <p className="result-count" aria-live="polite">{visible.length} бараа</p>
         <ProductList
           products={visible}

@@ -19,7 +19,7 @@
 
 ## Нэмэлт бүлгүүдийн зураг
 
-Эмэгтэй, эрэгтэй хувцас, гал тогооны хэрэгслийн зургийг [DummyJSON](https://dummyjson.com)-ийн туршилтын өгөгдлөөс авсан (бодит бүтээгдэхүүн биш, зөвхөн туршилт). Хүүхдийн хувцасны зургуудыг дараах эх сурвалжаас авсан:
+Эмэгтэй, эрэгтэй хувцас, гал тогоо, технологи болон зарим цахилгаан барааны зургийг [DummyJSON](https://dummyjson.com)-ийн туршилтын өгөгдлөөс авсан (бодит бүтээгдэхүүн биш, зөвхөн туршилт). Хүүхдийн хувцас болон цахилгаан барааны зургуудыг дараах эх сурвалжаас авсан:
 
 | Бараа | Эх сурвалж | Зохиогч | Лиценз |
 |---|---|---|---|
@@ -38,5 +38,23 @@
 | kids-13 | [Baby Shoes](https://stocksnap.io/photo/baby-shoes-AM0TUTSZ4U) | Drew Hays | CC0 1.0 |
 | kids-15 | [Baby in woolly hat with ears.jpg](https://commons.wikimedia.org/wiki/File:Baby_in_woolly_hat_with_ears.jpg) | Minglong123 | CC BY-SA 4.0 |
 | kids-16 | [Cuuute Baby (67022553).jpeg](https://commons.wikimedia.org/wiki/File:Cuuute_Baby_(67022553).jpeg) | Suzaa Suu | CC BY 3.0 |
-| kids-17 | [Baby wearing hat and babygrow.jpg](https://commons.wikimedia.org/wiki/File:Baby_wearing_hat_and_babygrow.jpg) | Victoria Borodinova (Виктория Бородинова) | CC0 |
+| kids-17 | [Baby wearing hat and babygrow.jpg](https://commons.wikimedia.org/wiki/File:Baby_wearing_hat_and_babygrow.jpg) | Victoria Borodinova (Виктория Бородинова)
+
+https:/ | CC0 |
 | kids-18 | [Nepalese Children in Tadapani, Ghandruk-Nepal-4428.jpg](https://commons.wikimedia.org/wiki/File:Nepalese_Children_in_Tadapani,_Ghandruk-Nepal-4428.jpg) | Bijay Chaurasia | CC BY-SA 4.0 |
+| appliances-05 | [2023 Air Duster (1).jpg](https://commons.wikimedia.org/wiki/File:2023_Air_Duster_(1).jpg) | Jacek Halicki | CC BY-SA 4.0 |
+| appliances-06 | [2023 Czajnik elektryczny N'OVEEN.jpg](https://commons.wikimedia.org/wiki/File:2023_Czajnik_elektryczny_N%27OVEEN.jpg) | Jacek Halicki | CC BY-SA 4.0 |
+| appliances-07 | [2023 Czajnik elektryczny Bosch (1).jpg](https://commons.wikimedia.org/wiki/File:2023_Czajnik_elektryczny_Bosch_(1).jpg) | Jacek Halicki | CC BY-SA 4.0 |
+| appliances-08 | [Toaster with molten plastic casing 3.jpg](https://commons.wikimedia.org/wiki/File:Toaster_with_molten_plastic_casing_3.jpg) | Almanta | CC BY-SA 4.0 |
+| appliances-09 | [Electric steam iron.jpg](https://commons.wikimedia.org/wiki/File:Electric_steam_iron.jpg) | Colin | CC BY-SA 3.0 |
+| appliances-10 | [Battery-powered electric fan on a white background at home.jpg](https://commons.wikimedia.org/wiki/File:Battery-powered_electric_fan_on_a_white_background_at_home.jpg) | Curpharar | CC BY-SA 4.0 |
+| appliances-11 | [Panasonic RICE COOKER SR-L15H8.jpg](https://commons.wikimedia.org/wiki/File:Panasonic_RICE_COOKER_SR-L15H8.jpg) | Dinkun Chen | CC BY-SA 4.0 |
+| appliances-12 | [Rival Rice Cooker.jpg](https://commons.wikimedia.org/wiki/File:Rival_Rice_Cooker.jpg) | Jugo Yokomizo | CC BY-SA 4.0 |
+| appliances-13 | [Air conditioner 3.jpg](https://commons.wikimedia.org/wiki/File:Air_conditioner_3.jpg) | Solijon Solayev | CC BY-SA 4.0 |
+| appliances-14 | [Krups koffiezetapparaat van Van Nelle, zwart, objectnr 90899-A-B.JPG](https://commons.wikimedia.org/wiki/File:Krups_koffiezetapparaat_van_Van_Nelle,_zwart,_objectnr_90899-A-B.JPG) | Krups | CC BY-SA 3.0 |
+| appliances-15 | [Миксер ДОМОТЕК.jpg](https://commons.wikimedia.org/wiki/File:%D0%9C%D0%B8%D0%BA%D1%81%D0%B5%D1%80_%D0%94%D0%9E%D0%9C%D0%9E%D0%A2%D0%95%D0%9A.jpg) | Schekinov Alexey Victorovich | CC BY-SA 4.0 |
+| appliances-16 | [Liquadora.JPG](https://commons.wikimedia.org/wiki/File:Liquadora.JPG) | Mcapdevila | CC BY-SA 3.0 |
+| appliances-17 | [Air Fryer 2020.jpg](https://commons.wikimedia.org/wiki/File:Air_Fryer_2020.jpg) | I am R. | CC BY 2.0 |
+| appliances-18 | [2023 Golarka Philips.jpg](https://commons.wikimedia.org/wiki/File:2023_Golarka_Philips.jpg) | Jacek Halicki | CC BY-SA 4.0 |
+| appliances-19 | [Hair straightener TTH2510 by Tescom (2015-09-19).JPG](https://commons.wikimedia.org/wiki/File:Hair_straightener_TTH2510_by_Tescom_(2015-09-19).JPG) | Lombroso | CC BY-SA 4.0 |
+| appliances-20 | [Food Processor 2.jpg](https://commons.wikimedia.org/wiki/File:Food_Processor_2.jpg) | Donovan Govan | CC BY-SA 3.0 |

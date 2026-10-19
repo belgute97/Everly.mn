@@ -41,7 +41,11 @@ export default function ProductDetailPage({ getQty, onAdd }: Props) {
       <Link to="/" className="back-link" onClick={goBack}>← Буцах</Link>
       <ProductImage src={product.image} alt={product.name} />
       <h1>{product.name}</h1>
-      <p className="price">{formatPrice(product.price)}</p>
+      <p className="price">
+        {formatPrice(product.price)}
+        {product.oldPrice && <s className="price-old">{formatPrice(product.oldPrice)}</s>}
+      </p>
+      {product.promoLabel && <p className="promo-chip">{product.promoLabel}</p>}
       <p>{product.description}</p>
       {product.sizes.length > 1 && (
         <>

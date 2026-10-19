@@ -1,18 +1,17 @@
 import { categories, categoriesOf, groups } from '../data/categories'
-import { products } from '../data/products'
-import type { Category, Group } from '../types'
+import type { Category, Group, Product } from '../types'
 
 interface Props {
+  source: Product[] // тоог бодох бараанууд (бүгд эсвэл зөвхөн хямдралтай)
   group: Group | null
   sub: Category | null
   onGroup: (group: Group | null) => void
   onSub: (sub: Category | null) => void
 }
 
-const countIn = (allowed: Category[] | null) =>
-  allowed === null ? products.length : products.filter((p) => allowed.includes(p.category)).length
-
-export default function CategoryFilter({ group, sub, onGroup, onSub }: Props) {
+export default function CategoryFilter({ source, group, sub, onGroup, onSub }: Props) {
+  const countIn = (allowed: Category[] | null) =>
+    allowed === null ? source.length : source.filter((p) => allowed.includes(p.category)).length
   const subs = group === 'food' ? categories.filter((c) => c.group === 'food') : []
   return (
     <>
