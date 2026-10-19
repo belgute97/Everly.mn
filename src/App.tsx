@@ -1,6 +1,8 @@
 import { useCallback, useState } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
+import AdBanner from './components/AdBanner'
 import ChatWidget from './components/ChatWidget'
+import ContactInfo from './components/ContactInfo'
 import Header from './components/Header'
 import SideMenu from './components/SideMenu'
 import Toast, { type ToastData } from './components/Toast'
@@ -55,6 +57,7 @@ function App() {
     <div className="shell">
       <SideMenu open={menuOpen} onClose={closeMenu} saleCount={saleCount} />
       <main className="app">
+        <AdBanner />
         <Header count={cart.count} onMenu={() => setMenuOpen(true)} />
         {/* key нь хуудас солигдох бүрт fade-up animation-ыг дахин ажиллуулна */}
         <div className="page" key={location.pathname}>
@@ -80,6 +83,7 @@ function App() {
         <footer className="site-footer">
           <strong>Everly</strong>
           <p>Хүнс, хувцас, гал тогоо, цахилгаан бараа, технологи нэг дор. Туршилтын дэлгүүр: жинхэнэ төлбөр авахгүй.</p>
+          <ContactInfo heading="h3" />
         </footer>
         <Toast toast={toast} onClose={closeToast} />
         <ChatWidget />
