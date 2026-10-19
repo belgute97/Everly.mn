@@ -65,6 +65,8 @@ const PATHS: Record<string, React.ReactNode> = {
       <path d="M4 20c2-5 6-8 11-10" />
     </>
   ),
+  pause: <path d="M8 5v14M16 5v14" />,
+  play: <path d="M7 5l12 7-12 7V5z" />,
   arrowLeft: <path d="M15 6l-6 6 6 6" />,
   arrowRight: <path d="M9 6l6 6-6 6" />,
 }

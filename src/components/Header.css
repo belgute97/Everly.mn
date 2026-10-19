@@ -12,9 +12,9 @@
 }
 
 .site-header.scrolled {
-  background: rgba(250, 248, 244, 0.72);
+  background: rgba(243, 245, 248, 0.78);
   backdrop-filter: blur(16px) saturate(1.6);
-  border-bottom-color: rgba(228, 222, 208, 0.8);
+  border-bottom-color: rgba(221, 227, 234, 0.9);
 }
 
 @media (min-width: 640px) {

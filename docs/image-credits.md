@@ -50,7 +50,7 @@ https:/ | CC0 |
 | appliances-10 | [Battery-powered electric fan on a white background at home.jpg](https://commons.wikimedia.org/wiki/File:Battery-powered_electric_fan_on_a_white_background_at_home.jpg) | Curpharar | CC BY-SA 4.0 |
 | appliances-11 | [Panasonic RICE COOKER SR-L15H8.jpg](https://commons.wikimedia.org/wiki/File:Panasonic_RICE_COOKER_SR-L15H8.jpg) | Dinkun Chen | CC BY-SA 4.0 |
 | appliances-12 | [Rival Rice Cooker.jpg](https://commons.wikimedia.org/wiki/File:Rival_Rice_Cooker.jpg) | Jugo Yokomizo | CC BY-SA 4.0 |
-| appliances-13 | [Air conditioner 3.jpg](https://commons.wikimedia.org/wiki/File:Air_conditioner_3.jpg) | Solijon Solayev | CC BY-SA 4.0 |
+| appliances-13 | [Aire acondicionado en México (Dominio Público).jpg](https://commons.wikimedia.org/wiki/File:Aire_acondicionado_en_M%C3%A9xico_(Dominio_P%C3%BAblico).jpg) | DogeGamer2015MZT2 | CC0 |
 | appliances-14 | [Krups koffiezetapparaat van Van Nelle, zwart, objectnr 90899-A-B.JPG](https://commons.wikimedia.org/wiki/File:Krups_koffiezetapparaat_van_Van_Nelle,_zwart,_objectnr_90899-A-B.JPG) | Krups | CC BY-SA 3.0 |
 | appliances-15 | [Миксер ДОМОТЕК.jpg](https://commons.wikimedia.org/wiki/File:%D0%9C%D0%B8%D0%BA%D1%81%D0%B5%D1%80_%D0%94%D0%9E%D0%9C%D0%9E%D0%A2%D0%95%D0%9A.jpg) | Schekinov Alexey Victorovich | CC BY-SA 4.0 |
 | appliances-16 | [Liquadora.JPG](https://commons.wikimedia.org/wiki/File:Liquadora.JPG) | Mcapdevila | CC BY-SA 3.0 |
