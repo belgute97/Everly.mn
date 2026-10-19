@@ -121,3 +121,30 @@
   height: 100%;
   pointer-events: none;
 }
+
+/* Харанхуй горимд тод шар зар нүд гялбуулдаг тул бүдэг алтлаг болгоно */
+[data-theme='dark'] .ad-banner {
+  color: #ffe9a8;
+  background: linear-gradient(90deg, #3b2f0a, #2a2208);
+  border-bottom: 1px solid rgba(255, 200, 61, 0.25);
+}
+
+[data-theme='dark'] .ad-banner code {
+  color: #ffe9a8;
+  background: rgba(255, 200, 61, 0.18);
+}
+
+[data-theme='dark'] .ad-link {
+  color: #0f1b2d;
+  background: var(--color-gold);
+}
+
+[data-theme='dark'] .ad-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Цайвар хөх дэвсгэр дээр цагаан үсэг тодрохгүй тул гүн хөх болгоно */
+[data-theme='dark'] .wallet-card {
+  background: linear-gradient(135deg, #1d4f9c, #12306a);
+  border: 1px solid rgba(90, 162, 255, 0.35);
+}
