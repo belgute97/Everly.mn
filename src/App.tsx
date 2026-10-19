@@ -10,7 +10,9 @@ import { products } from './data/products'
 import { useCart } from './hooks/useCart'
 import CartPage from './pages/CartPage'
 import CheckoutPage from './pages/CheckoutPage'
+import GamesPage from './pages/GamesPage'
 import HelpPage from './pages/HelpPage'
+import HoroscopePage from './pages/HoroscopePage'
 import NotFoundPage from './pages/NotFoundPage'
 import ProductDetailPage from './pages/ProductDetailPage'
 import ProductCollectionPage from './pages/ProductCollectionPage'
@@ -77,6 +79,8 @@ function App() {
             <Route path="/viewed" element={<ProductCollectionPage kind="viewed" getQty={cart.quantityOf} onAdd={handleAdd} onSetQuantity={cart.setQuantity} />} />
             <Route path="/wallet" element={<WalletPage />} />
             <Route path="/help" element={<HelpPage />} />
+            <Route path="/horoscope" element={<HoroscopePage />} />
+            <Route path="/games" element={<GamesPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </div>

@@ -72,6 +72,18 @@ export default function SideMenu({ open, onClose, saleCount }: Props) {
                 <span className="side-badge">{saleCount}</span>
               </Link>
             </li>
+            <li>
+              <Link to="/horoscope" className={cls(location.pathname === '/horoscope')} onClick={onClose}>
+                <Icon name="zodiac" />
+                <span>Сонжоо, зурхай</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/games" className={cls(location.pathname === '/games')} onClick={onClose}>
+                <Icon name="game" />
+                <span>Mini game</span>
+              </Link>
+            </li>
             <li className="side-divider" role="presentation" />
             {groups.map((g) => (
               <li key={g.id}>

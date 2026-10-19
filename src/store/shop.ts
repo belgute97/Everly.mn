@@ -12,7 +12,12 @@ export interface Profile {
   address: string
   email: string
   birthday: string // YYYY-MM-DD эсвэл хоосон
+  birthdayConfirmed: boolean // зурхай харахын тулд баталгаажуулсан эсэх
 }
+
+export const TOKEN_PRICE = 100 // 1 token = 100₮ (хэтэвчээс)
+export const DAILY_TOKENS = 3
+const MAX_TOKENS = 9999
 
 export const COUPONS: Record<string, number> = {
   WELCOME5000: 5000,
@@ -64,10 +69,12 @@ interface ShopState {
   reviews: Review[]
   orders: Order[]
   usedCoupons: string[]
+  tokens: number
+  lastClaim: string // сүүлд өдрийн token авсан өдөр, YYYY-MM-DD
 }
 
 const EMPTY: ShopState = {
-  profile: { name: '', phone: '', address: '', email: '', birthday: '' },
+  profile: { name: '', phone: '', address: '', email: '', birthday: '', birthdayConfirmed: false },
   saved: [],
   viewed: [],
   balance: 0,
@@ -75,6 +82,8 @@ const EMPTY: ShopState = {
   reviews: [],
   orders: [],
   usedCoupons: [],
+  tokens: 0,
+  lastClaim: '',
 }
 
 // randomUUID нь http дээр ажилладаггүй тул энгийн id
@@ -132,7 +141,10 @@ function sanitize(raw: unknown): ShopState {
       address: str(p.address, 200),
       email: str(p.email, 100),
       birthday: /^\d{4}-\d{2}-\d{2}$/.test(str(p.birthday, 10)) ? str(p.birthday, 10) : '',
+      birthdayConfirmed: p.birthdayConfirmed === true && /^\d{4}-\d{2}-\d{2}$/.test(str(p.birthday, 10)),
     },
+    tokens: Math.min(Math.max(0, Math.floor(Number(r.tokens)) || 0), MAX_TOKENS),
+    lastClaim: /^\d{4}-\d{2}-\d{2}$/.test(str(r.lastClaim, 10)) ? str(r.lastClaim, 10) : '',
     orders: orders.slice(0, 50),
     usedCoupons: (Array.isArray(r.usedCoupons) ? r.usedCoupons : []).filter((c): c is string => typeof c === 'string' && c in COUPONS),
     saved: idList(r.saved),
@@ -183,8 +195,45 @@ const subscribe = (l: () => void) => {
 export const useShop = () => useSyncExternalStore(subscribe, () => state)
 
 export const shop = {
-  saveProfile(profile: Profile) {
-    set({ ...state, profile })
+  saveProfile(profile: Omit<Profile, 'birthdayConfirmed'>) {
+    // Төрсөн өдөр өөрчлөгдвөл баталгаажуулалт дахин хийгдэнэ
+    const confirmed = state.profile.birthdayConfirmed && profile.birthday === state.profile.birthday
+    set({ ...state, profile: { ...profile, birthdayConfirmed: confirmed } })
+  },
+
+  confirmBirthday(birthday: string): string | null {
+    const today = new Date().toLocaleDateString('en-CA')
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(birthday) || Number.isNaN(Date.parse(birthday))) return 'Төрсөн өдрөө оруулна уу'
+    if (birthday > today || birthday < '1900-01-01') return 'Төрсөн өдөр буруу байна'
+    set({ ...state, profile: { ...state.profile, birthday, birthdayConfirmed: true } })
+    return null
+  },
+
+  // Өдөрт нэг удаа үнэгүй token авна
+  claimDaily(): boolean {
+    const today = new Date().toLocaleDateString('en-CA')
+    if (state.lastClaim === today) return false
+    set({ ...state, tokens: Math.min(state.tokens + DAILY_TOKENS, MAX_TOKENS), lastClaim: today })
+    return true
+  },
+
+  // Хэтэвчээс token худалдаж авна: амжилттай бол null
+  buyTokens(count: number): string | null {
+    if (!Number.isInteger(count) || count < 1) return 'Token-ий тоо буруу байна'
+    if (state.tokens + count > MAX_TOKENS) return 'Token хэт их болно'
+    if (!shop.pay(count * TOKEN_PRICE, `${count} token худалдаж авсан`)) return 'Хэтэвчний үлдэгдэл хүрэлцэхгүй байна'
+    set({ ...state, tokens: state.tokens + count })
+    return null
+  },
+
+  spendToken(): boolean {
+    if (state.tokens < 1) return false
+    set({ ...state, tokens: state.tokens - 1 })
+    return true
+  },
+
+  addTokens(count: number) {
+    set({ ...state, tokens: Math.min(state.tokens + Math.max(0, Math.floor(count)), MAX_TOKENS) })
   },
 
   toggleSaved(productId: string) {
