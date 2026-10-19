@@ -6,7 +6,7 @@ import { products } from '../data/products'
 import type { Category } from '../types'
 import { filterProducts } from '../utils/filterProducts'
 
-export default function ProductsPage() {
+export default function ProductsPage({ onAdd }: { onAdd: (productId: string, size: string) => void }) {
   const [category, setCategory] = useState<Category | null>(null)
   const [query, setQuery] = useState('')
   const visible = filterProducts(products, category, query)
@@ -15,7 +15,7 @@ export default function ProductsPage() {
     <>
       <SearchBox value={query} onChange={setQuery} />
       <CategoryFilter selected={category} onSelect={setCategory} />
-      <ProductList products={visible} />
+      <ProductList products={visible} onAdd={onAdd} />
     </>
   )
 }

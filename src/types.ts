@@ -7,7 +7,14 @@ export interface Product {
   category: Category
   price: number // бүхэл төгрөг, жишээ нь 18000 (= 18,000₮). Бүх размерт ижил
   description: string // нэг өгүүлбэр тайлбар
-  image: string // зургийн зам, public/ хавтаснаас: "/images/products/potato.svg"
+  image: string // зургийн зам, public/ хавтаснаас: "/images/products/potato.webp"
   stock: number // үлдэгдэл. 0 бол дууссан
   sizes: string[] // хэрэглэгчийн сонгох размер. Эхнийх нь анхдагч сонголт
+}
+
+// Сагсан дахь нэг мөр: бараа + сонгосон размер + тоо
+export interface CartItem {
+  productId: string
+  size: string
+  quantity: number
 }
