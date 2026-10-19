@@ -26,11 +26,11 @@
   position: absolute;
   top: 2px;
   right: 0;
-  min-width: 20px;
+  min-width: 22px;
   padding: 0 5px;
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   font-weight: 700;
-  line-height: 20px;
+  line-height: 22px;
   text-align: center;
   color: #fff;
   background: var(--color-accent);
