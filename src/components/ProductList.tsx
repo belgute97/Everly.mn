@@ -2,7 +2,12 @@ import { Link } from 'react-router-dom'
 import { formatPrice } from '../utils/formatPrice'
 import type { Product } from '../types'
 
-export default function ProductList({ products }: { products: Product[] }) {
+interface Props {
+  products: Product[]
+  onAdd: (productId: string, size: string) => void
+}
+
+export default function ProductList({ products, onAdd }: Props) {
   if (products.length === 0) {
     return <p className="empty">Бараа олдсонгүй</p>
   }
@@ -16,6 +21,14 @@ export default function ProductList({ products }: { products: Product[] }) {
             <p className="price">{formatPrice(p.price)}</p>
             {p.stock === 0 && <p className="sold-out">Дууссан</p>}
           </Link>
+          <button
+            type="button"
+            className="card-add"
+            disabled={p.stock === 0}
+            onClick={() => onAdd(p.id, p.sizes[0])}
+          >
+            Сагсанд нэмэх
+          </button>
         </li>
       ))}
     </ul>

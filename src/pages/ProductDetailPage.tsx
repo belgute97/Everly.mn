@@ -4,10 +4,11 @@ import { products } from '../data/products'
 import { formatPrice } from '../utils/formatPrice'
 import './ProductDetailPage.css'
 
-export default function ProductDetailPage() {
+export default function ProductDetailPage({ onAdd }: { onAdd: (productId: string, size: string) => void }) {
   const { id } = useParams()
   const product = products.find((p) => p.id === id)
   const [size, setSize] = useState<string | null>(null)
+  const [added, setAdded] = useState(false)
 
   if (!product) {
     return (
@@ -42,10 +43,20 @@ export default function ProductDetailPage() {
         ))}
       </div>
       {soldOut && <p className="sold-out">Дууссан</p>}
-      {/* Сагсны state бэлэн болсны дараа холбоно */}
-      <button type="button" className="add-to-cart" disabled={soldOut}>
+      <button
+        type="button"
+        className="add-to-cart"
+        disabled={soldOut}
+        onClick={() => {
+          onAdd(product.id, selected)
+          setAdded(true)
+        }}
+      >
         Сагсанд нэмэх
       </button>
+      <p className="added-note" role="status">
+        {added ? 'Сагсанд нэмэгдлээ' : ''}
+      </p>
     </article>
   )
 }

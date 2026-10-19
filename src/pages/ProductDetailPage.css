@@ -1,54 +1,99 @@
+.product-detail {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
 .back-link {
-  display: inline-block;
-  margin-bottom: 12px;
-  color: inherit;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-bottom: 8px;
+  color: var(--color-primary);
+  font-weight: 700;
   text-decoration: none;
 }
 
+.back-link:hover {
+  text-decoration: underline;
+}
+
 .product-detail img {
+  display: block;
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  border-radius: 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
 }
 
 .product-detail h2 {
-  margin: 12px 0 4px;
+  margin: 16px 0 4px;
+  font-size: 1.5rem;
+  line-height: 1.3;
+}
+
+.product-detail .price {
+  font-size: 1.5rem;
 }
 
 .size-options {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin: 12px 0;
+  margin: 16px 0;
 }
 
 .size-btn {
-  padding: 8px 16px;
-  border: 1px solid #064e3b;
+  min-height: 44px;
+  padding: 0 20px;
+  font: inherit;
+  font-weight: 600;
+  color: var(--color-fg);
+  background: var(--color-card);
+  border: 2px solid var(--color-border);
   border-radius: 999px;
-  background: #fff;
   cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.size-btn:hover {
+  border-color: var(--color-primary);
 }
 
 .size-btn.active {
-  background: #064e3b;
-  color: #fff;
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 .add-to-cart {
   width: 100%;
+  min-height: 52px;
   padding: 12px;
-  border: 0;
-  border-radius: 12px;
-  background: #064e3b;
-  color: #fff;
+  font: inherit;
+  font-size: 1.0625rem;
   font-weight: 700;
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+  border: 0;
+  border-radius: 14px;
   cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.add-to-cart:hover:not(:disabled) {
+  background: #166534;
 }
 
 .add-to-cart:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.added-note {
+  min-height: 1.5em;
+  margin: 8px 0 0;
+  color: var(--color-primary);
+  font-weight: 600;
+  text-align: center;
 }
