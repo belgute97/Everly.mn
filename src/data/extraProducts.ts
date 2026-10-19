@@ -924,10 +924,10 @@ export const extraProducts: Product[] = [
   },
   {
     id: 'appliances-13',
-    name: 'Агааржуулагч',
+    name: 'Агааржуулагчийн гадна блок',
     category: 'appliances',
     price: 1450000,
-    description: 'Хананд өлгөх, өрөөг хөргөх агааржуулагч.',
+    description: 'Өрөөг хөргөх систем, гадна блок.',
     image: '/images/products/appliances-13.webp',
     stock: 13,
     sizes: ['Стандарт'],

@@ -43,35 +43,38 @@ export default function ProductList({ products, getQty, onAdd, onSetQuantity, on
               ) : discount > 0 ? (
                 <span className="badge-sale">-{discount}%</span>
               ) : null}
-              {p.stock > 0 &&
-                (qty > 0 ? (
-                  <div className="stepper card-stepper" role="group" aria-label={`${p.name}, тоо`}>
-                    <button type="button" aria-label="Хасах" onClick={() => onSetQuantity(p.id, size, qty - 1)}>−</button>
-                    <span aria-live="polite">{qty}</span>
-                    <button type="button" aria-label="Нэмэх" onClick={() => onAdd(p.id, size)}>+</button>
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    className="card-add"
-                    aria-label={`Сагсанд нэмэх: ${p.name}`}
-                    onClick={() => onAdd(p.id, size)}
-                  >
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
-                      <path d="M12 5v14M5 12h14" />
-                    </svg>
-                  </button>
-                ))}
             </div>
             <Link to={`/products/${p.id}`} className="card-body">
               {categoryName && <p className="card-cat">{categoryName}</p>}
               <h3>{p.name}</h3>
-              <p className="price">
+              <p className={p.oldPrice ? 'price on-sale' : 'price'}>
                 {formatPrice(p.price)}
                 {p.oldPrice && <s className="price-old">{formatPrice(p.oldPrice)}</s>}
               </p>
               {p.promoLabel && <p className="promo-chip">{p.promoLabel}</p>}
             </Link>
+            <div className="card-actions">
+              {p.stock === 0 ? (
+                <button type="button" className="add-to-cart card-add" disabled>
+                  Дууссан
+                </button>
+              ) : qty > 0 ? (
+                <div className="stepper card-stepper" role="group" aria-label={`${p.name}, тоо`}>
+                  <button type="button" aria-label="Хасах" onClick={() => onSetQuantity(p.id, size, qty - 1)}>−</button>
+                  <span aria-live="polite">{qty}</span>
+                  <button type="button" aria-label="Нэмэх" onClick={() => onAdd(p.id, size)}>+</button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  className="add-to-cart card-add"
+                  aria-label={`Сагсанд нэмэх: ${p.name}`}
+                  onClick={() => onAdd(p.id, size)}
+                >
+                  Сагсанд нэмэх
+                </button>
+              )}
+            </div>
           </li>
         )
       })}
