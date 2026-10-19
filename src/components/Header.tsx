@@ -28,6 +28,12 @@ export default function Header({ count, onMenu }: Props) {
         <Icon name="leaf" size={26} />
         Everly
       </Link>
+      <Link to="/saved" className="cart-link" aria-label="Хадгалсан бараа">
+        <Icon name="heart" size={24} />
+      </Link>
+      <Link to="/profile" className="cart-link" aria-label="Миний профайл">
+        <Icon name="user" size={24} />
+      </Link>
       <Link to="/cart" className="cart-link" aria-label={`Сагс, ${count} бараа`}>
         <Icon name="cart" size={24} />
         {count > 0 && (

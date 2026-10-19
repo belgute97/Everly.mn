@@ -65,6 +65,32 @@ const PATHS: Record<string, React.ReactNode> = {
       <path d="M4 20c2-5 6-8 11-10" />
     </>
   ),
+  user: (
+    <>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
+    </>
+  ),
+  heart: <path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z" />,
+  clock: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </>
+  ),
+  wallet: (
+    <>
+      <path d="M3 7a2 2 0 0 1 2-2h13v4" />
+      <path d="M3 7v11a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H5a2 2 0 0 1-2-1z" />
+      <path d="M16 14h.01" />
+    </>
+  ),
+  help: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.7M12 17h.01" />
+    </>
+  ),
   pause: <path d="M8 5v14M16 5v14" />,
   play: <path d="M7 5l12 7-12 7V5z" />,
   arrowLeft: <path d="M15 6l-6 6 6 6" />,

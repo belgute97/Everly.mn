@@ -8,9 +8,13 @@ import { products } from './data/products'
 import { useCart } from './hooks/useCart'
 import CartPage from './pages/CartPage'
 import CheckoutPage from './pages/CheckoutPage'
+import HelpPage from './pages/HelpPage'
 import NotFoundPage from './pages/NotFoundPage'
 import ProductDetailPage from './pages/ProductDetailPage'
+import ProductCollectionPage from './pages/ProductCollectionPage'
 import ProductsPage from './pages/ProductsPage'
+import ProfilePage from './pages/ProfilePage'
+import WalletPage from './pages/WalletPage'
 import { isPromo } from './utils/promo'
 
 const saleCount = products.filter(isPromo).length
@@ -65,6 +69,11 @@ function App() {
               }
             />
             <Route path="/checkout" element={<CheckoutPage items={cart.items} onClear={cart.clear} />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/saved" element={<ProductCollectionPage kind="saved" getQty={cart.quantityOf} onAdd={handleAdd} onSetQuantity={cart.setQuantity} />} />
+            <Route path="/viewed" element={<ProductCollectionPage kind="viewed" getQty={cart.quantityOf} onAdd={handleAdd} onSetQuantity={cart.setQuantity} />} />
+            <Route path="/wallet" element={<WalletPage />} />
+            <Route path="/help" element={<HelpPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </div>
