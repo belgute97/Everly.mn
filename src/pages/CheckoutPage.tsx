@@ -53,7 +53,7 @@ export default function CheckoutPage({ items, onClear }: { items: CartItem[]; on
 
   const lines: Line[] = items.flatMap((i) => {
     const p = products.find((x) => x.id === i.productId)
-    return p ? [{ id: `${i.productId}-${i.size}`, name: p.name, size: i.size, quantity: i.quantity, total: p.price * i.quantity }] : []
+    return p ? [{ id: `${i.productId}-${i.size}`, name: p.name, size: p.sizes.length > 1 ? i.size : '', quantity: i.quantity, total: p.price * i.quantity }] : []
   })
   const total = lines.reduce((sum, l) => sum + l.total, 0)
 
@@ -67,7 +67,7 @@ export default function CheckoutPage({ items, onClear }: { items: CartItem[]; on
         <ul className="summary-list">
           {done.lines.map((l) => (
             <li key={l.id}>
-              <span>{l.name} ({l.size}) × {l.quantity}</span>
+              <span>{l.name}{l.size ? ` (${l.size})` : ''} × {l.quantity}</span>
               <span>{formatPrice(l.total)}</span>
             </li>
           ))}
@@ -118,7 +118,7 @@ export default function CheckoutPage({ items, onClear }: { items: CartItem[]; on
         <ul className="summary-list">
           {lines.map((l) => (
             <li key={l.id}>
-              <span>{l.name} ({l.size}) × {l.quantity}</span>
+              <span>{l.name}{l.size ? ` (${l.size})` : ''} × {l.quantity}</span>
               <span>{formatPrice(l.total)}</span>
             </li>
           ))}

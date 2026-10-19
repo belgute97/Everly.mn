@@ -1,53 +1,76 @@
 import { useSearchParams } from 'react-router-dom'
 import CategoryFilter from '../components/CategoryFilter'
 import ProductList from '../components/ProductList'
+import PromoRail from '../components/PromoRail'
 import SearchBox from '../components/SearchBox'
-import { categories } from '../data/categories'
+import { categories, categoriesOf, groups } from '../data/categories'
 import { products } from '../data/products'
-import type { Category } from '../types'
+import type { Category, Group } from '../types'
 import { filterProducts } from '../utils/filterProducts'
+import { isPromo } from '../utils/promo'
 
 interface Props {
   getQty: (productId: string, size: string) => number
   onAdd: (productId: string, size: string) => void
   onSetQuantity: (productId: string, size: string, quantity: number) => void
+  saleOnly?: boolean // true бол зөвхөн хямдралтай, урамшуулалтай бараа
 }
 
-export default function ProductsPage({ getQty, onAdd, onSetQuantity }: Props) {
-  // Хайлт, ангиллыг URL-д хадгална: дэлгэрэнгүй хуудаснаас буцахад алдагдахгүй
+export default function ProductsPage({ getQty, onAdd, onSetQuantity, saleOnly = false }: Props) {
+  // Хайлт, бүлэг, ангиллыг URL-д хадгална: дэлгэрэнгүй хуудаснаас буцахад, цэснээс орхад ажиллана
   const [params, setParams] = useSearchParams()
   const query = params.get('q') ?? ''
-  const cat = params.get('cat')
-  const category = categories.find((c) => c.id === cat)?.id ?? null
+  const group = groups.find((g) => g.id === params.get('group'))?.id ?? null
+  const sub = group === 'food' ? (categories.find((c) => c.id === params.get('cat') && c.group === 'food')?.id ?? null) : null
 
-  const update = (next: { q?: string; cat?: Category | null }) => {
-    const p = new URLSearchParams(params)
+  const update = (next: { q?: string; group?: Group | null; sub?: Category | null }) => {
     const q = next.q ?? query
-    const c = next.cat === undefined ? category : next.cat
+    const g = next.group === undefined ? group : next.group
+    const s = next.group !== undefined ? null : next.sub === undefined ? sub : next.sub
+    const p = new URLSearchParams()
     if (q) p.set('q', q)
-    else p.delete('q')
-    if (c) p.set('cat', c)
-    else p.delete('cat')
+    if (g) p.set('group', g)
+    if (s) p.set('cat', s)
     setParams(p, { replace: true })
   }
 
-  const visible = filterProducts(products, category, query)
+  const source = saleOnly ? products.filter(isPromo) : products
+  const allowed = sub ? [sub] : group ? categoriesOf(group) : null
+  const visible = filterProducts(source, allowed, query)
 
   return (
     <>
-      <section className="hero">
-        <h1>Шинэхэн хүнс гэрт тань</h1>
-        <p>Ногоо, мах, цагаан идээг сонгоод сагсандаа нэмээрэй.</p>
-      </section>
-      <SearchBox value={query} onChange={(q) => update({ q })} />
-      <CategoryFilter selected={category} onSelect={(c) => update({ cat: c })} />
-      <ProductList
-        products={visible}
-        getQty={getQty}
-        onAdd={onAdd}
-        onSetQuantity={onSetQuantity}
-        onReset={() => setParams({}, { replace: true })}
-      />
+      {saleOnly ? (
+        <section className="hero sale-hero">
+          <h1>Хямдрал, урамшуулал</h1>
+          <p>Зөвхөн хямдралтай болон урамшуулалтай бараанууд: {source.length} бараа.</p>
+        </section>
+      ) : (
+        <section className="hero">
+          <h1>Хүнс, хувцас, технологи нэг дор</h1>
+          <p>Хэрэгтэй бүхнээ сонгоод сагсандаа нэмээрэй: хүнс, хувцас, гал тогоо, цахилгаан бараа, технологи.</p>
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
+          >
+            Бараа үзэх
+          </button>
+        </section>
+      )}
+      {!saleOnly && query === '' && !group && <PromoRail />}
+      <div id="products">
+        <SearchBox value={query} onChange={(q) => update({ q })} />
+        <CategoryFilter source={source} group={group} sub={sub} onGroup={(g) => update({ group: g })} onSub={(s) => update({ sub: s })} />
+        <p className="result-count" aria-live="polite">{visible.length} бараа</p>
+        <ProductList
+          products={visible}
+          getQty={getQty}
+          onAdd={onAdd}
+          onSetQuantity={onSetQuantity}
+          onReset={() => setParams({}, { replace: true })}
+        />
+      </div>
     </>
   )
 }

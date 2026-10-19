@@ -1,16 +1,35 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import Icon from './icons'
 import './Header.css'
 
-export default function Header({ count }: { count: number }) {
+interface Props {
+  count: number
+  onMenu: () => void
+}
+
+// Дээд мөр: утсан дээр цэсийн товч, лого; компьютер дээр зөвхөн сагс (цэс нь зүүн талд)
+export default function Header({ count, onMenu }: Props) {
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   return (
-    <header className="site-header">
-      <Link to="/" className="logo">Everly</Link>
+    <header className={scrolled ? 'site-header scrolled' : 'site-header'}>
+      <button type="button" className="menu-btn" aria-label="Цэс нээх" onClick={onMenu}>
+        <Icon name="menu" size={24} />
+      </button>
+      <Link to="/" className="logo header-logo">
+        <Icon name="leaf" size={26} />
+        Everly
+      </Link>
       <Link to="/cart" className="cart-link" aria-label={`Сагс, ${count} бараа`}>
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <circle cx="9" cy="20" r="1.5" />
-          <circle cx="18" cy="20" r="1.5" />
-          <path d="M2 3h3l2.7 11.4a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 7H6" />
-        </svg>
+        <Icon name="cart" size={24} />
         {count > 0 && (
           <span className="cart-badge" key={count}>
             {count}

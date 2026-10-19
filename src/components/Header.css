@@ -5,18 +5,61 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 0 -16px 8px;
-  padding: 4px 16px;
-  background: rgba(246, 243, 236, 0.92);
-  backdrop-filter: blur(8px);
+  margin: 0 -16px;
+  padding: 8px 16px;
+  border-bottom: 1px solid transparent;
+  transition: background-color 0.3s, border-color 0.3s, backdrop-filter 0.3s;
+}
+
+.site-header.scrolled {
+  background: rgba(250, 248, 244, 0.72);
+  backdrop-filter: blur(16px) saturate(1.6);
+  border-bottom-color: rgba(228, 222, 208, 0.8);
+}
+
+@media (min-width: 640px) {
+  .site-header {
+    margin-inline: -24px;
+    padding-inline: 24px;
+  }
 }
 
 .logo {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
   font-family: var(--font-heading);
-  font-size: 1.75rem;
-  font-weight: 700;
+  font-size: 1.625rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
   color: var(--color-primary);
   text-decoration: none;
+}
+
+.logo .icon {
+  transition: transform 0.5s var(--ease);
+}
+
+.logo:hover .icon {
+  transform: rotate(-18deg) scale(1.1);
+}
+
+.menu-btn {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-left: -8px;
+  color: var(--color-fg);
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.menu-btn:hover {
+  background: var(--color-tint);
 }
 
 .cart-link {
@@ -26,6 +69,13 @@
   width: 48px;
   height: 48px;
   color: var(--color-fg);
+  border-radius: 50%;
+  transition: background-color 0.2s, transform 0.2s var(--ease);
+}
+
+.cart-link:hover {
+  background: var(--color-tint);
+  transform: scale(1.06);
 }
 
 .cart-badge {
@@ -34,24 +84,30 @@
   right: 0;
   min-width: 22px;
   padding: 0 5px;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 700;
   line-height: 22px;
   text-align: center;
   color: #fff;
   background: var(--color-accent);
   border-radius: 999px;
-  animation: badge-pop 0.25s ease-out;
+  animation: badge-pop 0.4s var(--ease);
 }
 
 @keyframes badge-pop {
-  50% {
-    transform: scale(1.3);
+  40% {
+    transform: scale(1.5);
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .cart-badge {
-    animation: none;
+/* Компьютер дээр цэс нь зүүн талд тул лого, цэсийн товч энд хэрэггүй */
+@media (min-width: 1024px) {
+  .site-header {
+    justify-content: flex-end;
+  }
+
+  .menu-btn,
+  .header-logo {
+    display: none;
   }
 }

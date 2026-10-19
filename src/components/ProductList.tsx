@@ -1,5 +1,8 @@
+import type { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
+import { categories } from '../data/categories'
 import { formatPrice } from '../utils/formatPrice'
+import { discountPercent } from '../utils/promo'
 import type { Product } from '../types'
 import ProductImage from './ProductImage'
 
@@ -24,37 +27,50 @@ export default function ProductList({ products, getQty, onAdd, onSetQuantity, on
   }
   return (
     <ul className="product-grid">
-      {products.map((p) => {
+      {products.map((p, index) => {
         const size = p.sizes[0]
         const qty = getQty(p.id, size)
+        const categoryName = categories.find((c) => c.id === p.category)?.name
+        const discount = discountPercent(p)
         return (
-          <li key={p.id} className="product-card">
+          <li key={p.id} className="product-card" style={{ '--i': index } as CSSProperties}>
             <div className="card-media">
               <Link to={`/products/${p.id}`} tabIndex={-1} aria-hidden="true">
                 <ProductImage src={p.image} alt="" lazy />
               </Link>
               {p.stock === 0 ? (
                 <span className="badge-soldout">Дууссан</span>
-              ) : qty > 0 ? (
-                <div className="stepper card-stepper" role="group" aria-label={`${p.name}, тоо`}>
-                  <button type="button" aria-label="Хасах" onClick={() => onSetQuantity(p.id, size, qty - 1)}>−</button>
-                  <span aria-live="polite">{qty}</span>
-                  <button type="button" aria-label="Нэмэх" onClick={() => onAdd(p.id, size)}>+</button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  className="card-add"
-                  aria-label={`Сагсанд нэмэх: ${p.name}`}
-                  onClick={() => onAdd(p.id, size)}
-                >
-                  +
-                </button>
-              )}
+              ) : discount > 0 ? (
+                <span className="badge-sale">-{discount}%</span>
+              ) : null}
+              {p.stock > 0 &&
+                (qty > 0 ? (
+                  <div className="stepper card-stepper" role="group" aria-label={`${p.name}, тоо`}>
+                    <button type="button" aria-label="Хасах" onClick={() => onSetQuantity(p.id, size, qty - 1)}>−</button>
+                    <span aria-live="polite">{qty}</span>
+                    <button type="button" aria-label="Нэмэх" onClick={() => onAdd(p.id, size)}>+</button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    className="card-add"
+                    aria-label={`Сагсанд нэмэх: ${p.name}`}
+                    onClick={() => onAdd(p.id, size)}
+                  >
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+                      <path d="M12 5v14M5 12h14" />
+                    </svg>
+                  </button>
+                ))}
             </div>
             <Link to={`/products/${p.id}`} className="card-body">
+              {categoryName && <p className="card-cat">{categoryName}</p>}
               <h3>{p.name}</h3>
-              <p className="price">{formatPrice(p.price)}</p>
+              <p className="price">
+                {formatPrice(p.price)}
+                {p.oldPrice && <s className="price-old">{formatPrice(p.oldPrice)}</s>}
+              </p>
+              {p.promoLabel && <p className="promo-chip">{p.promoLabel}</p>}
             </Link>
           </li>
         )

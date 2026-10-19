@@ -1,7 +1,9 @@
 import type { Product } from '../types'
+import { extraProducts } from './extraProducts'
+import { promos } from './promos'
 
-// Жишээ (mock) бараа. Ангилал бүрт 4, нийт 12. Дууссан нь: байцаа, тахианы мах.
-export const products: Product[] = [
+// Хүнсний жишээ (mock) бараа. Ангилал бүрт 4, нийт 12. Дууссан нь: байцаа, тахианы мах.
+const groceryProducts: Product[] = [
   // Ногоо
   {
     id: 'potato',
@@ -128,3 +130,18 @@ export const products: Product[] = [
     sizes: ['500 г × 4', '1 кг × 2'],
   },
 ]
+
+// Хямдрал, урамшууллыг барааны үндсэн мэдээлэлд тусад нь (promos.ts) хадгалж, энд хэрэгжүүлнэ
+function withPromo(p: Product): Product {
+  const promo = promos[p.id]
+  if (!promo) return p
+  const result = { ...p }
+  if (promo.percent) {
+    result.oldPrice = p.price
+    result.price = Math.round((p.price * (1 - promo.percent / 100)) / 100) * 100
+  }
+  if (promo.label) result.promoLabel = promo.label
+  return result
+}
+
+export const products: Product[] = [...groceryProducts, ...extraProducts].map(withPromo)
