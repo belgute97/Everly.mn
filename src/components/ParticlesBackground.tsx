@@ -14,11 +14,11 @@ export default function ParticlesBackground() {
     <div className="particles-bg" aria-hidden="true">
       <Particles
         particleColors={COLORS[theme]}
-        particleCount={240}
+        particleCount={130}
         particleSpread={4}
         speed={0.1}
         cameraDistance={30}
-        particleBaseSize={180}
+        particleBaseSize={150}
         sizeRandomness={1}
         glow={theme === 'dark' ? 0.5 : 0.2}
         twinkle={0.3}
@@ -26,7 +26,7 @@ export default function ParticlesBackground() {
         driftSpeed={0.5}
         hoverEffect="parallax"
         clickBurst={false}
-        opacity={theme === 'dark' ? 0.55 : 0.5}
+        opacity={theme === 'dark' ? 0.3 : 0.28}
       />
     </div>
   )
