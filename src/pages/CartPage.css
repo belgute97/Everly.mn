@@ -1,0 +1,18 @@
+.cart-page {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.cart-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cart-total {
+  margin: 16px 0;
+  font-size: 1.25rem;
+  text-align: right;
+}

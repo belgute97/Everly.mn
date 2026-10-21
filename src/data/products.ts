@@ -1,7 +1,9 @@
 import type { Product } from '../types'
+import { extraProducts } from './extraProducts'
+import { promos } from './promos'
 
-// Жишээ (mock) бараа. Ангилал бүрт 4, нийт 12. Дууссан нь: байцаа, тахианы мах.
-export const products: Product[] = [
+// Хүнсний жишээ (mock) бараа. Ангилал бүрт 4, нийт 12. Дууссан нь: байцаа, тахианы мах.
+const groceryProducts: Product[] = [
   // Ногоо
   {
     id: 'potato',
@@ -9,7 +11,7 @@ export const products: Product[] = [
     category: 'vegetables',
     price: 18000,
     description: 'Сэлэнгэ аймгийн хими бордоогүй тариалсан төмс.',
-    image: '/images/products/potato.svg',
+    image: '/images/products/potato.webp',
     stock: 25,
     sizes: ['Жижиг', 'Дунд', 'Том'],
   },
@@ -19,7 +21,7 @@ export const products: Product[] = [
     category: 'vegetables',
     price: 15000,
     description: 'Амттай, шүүслэг, угааж цэвэрлэсэн лууван.',
-    image: '/images/products/carrot.svg',
+    image: '/images/products/carrot.webp',
     stock: 30,
     sizes: ['Жижиг', 'Дунд', 'Том'],
   },
@@ -29,7 +31,7 @@ export const products: Product[] = [
     category: 'vegetables',
     price: 16500,
     description: 'Өнөө өглөө хураасан шинэхэн байцаа.',
-    image: '/images/products/cabbage.svg',
+    image: '/images/products/cabbage.webp',
     stock: 0,
     sizes: ['Жижиг', 'Дунд', 'Том'],
   },
@@ -39,7 +41,7 @@ export const products: Product[] = [
     category: 'vegetables',
     price: 35000,
     description: 'Төмс, лууван, сонгино, манжин холимог долоо хоногийн багц.',
-    image: '/images/products/veggie-box.svg',
+    image: '/images/products/veggie-box.webp',
     stock: 12,
     sizes: ['Жижиг', 'Дунд', 'Том'],
   },
@@ -51,7 +53,7 @@ export const products: Product[] = [
     category: 'meat',
     price: 87000,
     description: 'Бэлчээрийн малын өөх багатай гуя мах.',
-    image: '/images/products/beef.svg',
+    image: '/images/products/beef.webp',
     stock: 8,
     sizes: ['Бүтнээр', 'Том хэрчим', 'Жижиг хэрчим'],
   },
@@ -61,7 +63,7 @@ export const products: Product[] = [
     category: 'meat',
     price: 250000,
     description: 'Хангайн бэлчээрийн хонины бүтэн гулууз.',
-    image: '/images/products/mutton.svg',
+    image: '/images/products/mutton.webp',
     stock: 3,
     sizes: ['Бүтнээр', '4 хэсэгт', '8 хэсэгт'],
   },
@@ -71,7 +73,7 @@ export const products: Product[] = [
     category: 'meat',
     price: 42000,
     description: 'Чөлөөтэй өсгөсөн тахианы яс, арьсгүй цээж мах.',
-    image: '/images/products/chicken.svg',
+    image: '/images/products/chicken.webp',
     stock: 0,
     sizes: ['Бүтнээр', 'Том хэрчим', 'Жижиг хэрчим'],
   },
@@ -81,7 +83,7 @@ export const products: Product[] = [
     category: 'meat',
     price: 78000,
     description: 'Өвлийн идэшинд тохиромжтой шинэ адууны хавирга.',
-    image: '/images/products/horse-ribs.svg',
+    image: '/images/products/horse-ribs.webp',
     stock: 5,
     sizes: ['Бүтнээр', 'Том хэрчим', 'Жижиг хэрчим'],
   },
@@ -93,7 +95,7 @@ export const products: Product[] = [
     category: 'dairy',
     price: 15000,
     description: 'Элсэн чихэр, нэмэлтгүй гэрийн исгэлэн тараг.',
-    image: '/images/products/yogurt.svg',
+    image: '/images/products/yogurt.webp',
     stock: 20,
     sizes: ['500 мл × 6', '1 л × 3', '3 л × 1'],
   },
@@ -103,7 +105,7 @@ export const products: Product[] = [
     category: 'dairy',
     price: 25000,
     description: 'Өвөрхангайн малчин өрхийн исгэсэн гүүний айраг.',
-    image: '/images/products/airag.svg',
+    image: '/images/products/airag.webp',
     stock: 15,
     sizes: ['1 л × 5', '2.5 л × 2', '5 л × 1'],
   },
@@ -113,7 +115,7 @@ export const products: Product[] = [
     category: 'dairy',
     price: 32000,
     description: 'Үнээний сүүгээр хийсэн зузаан, тослог өрөм.',
-    image: '/images/products/urum.svg',
+    image: '/images/products/urum.webp',
     stock: 10,
     sizes: ['250 г × 4', '500 г × 2', '1 кг × 1'],
   },
@@ -123,8 +125,23 @@ export const products: Product[] = [
     category: 'dairy',
     price: 45000,
     description: 'Наранд хатаасан, бага исгэлэн гэрийн ааруул.',
-    image: '/images/products/aaruul.svg',
+    image: '/images/products/aaruul.webp',
     stock: 18,
     sizes: ['500 г × 4', '1 кг × 2'],
   },
 ]
+
+// Хямдрал, урамшууллыг барааны үндсэн мэдээлэлд тусад нь (promos.ts) хадгалж, энд хэрэгжүүлнэ
+function withPromo(p: Product): Product {
+  const promo = promos[p.id]
+  if (!promo) return p
+  const result = { ...p }
+  if (promo.percent) {
+    result.oldPrice = p.price
+    result.price = Math.round((p.price * (1 - promo.percent / 100)) / 100) * 100
+  }
+  if (promo.label) result.promoLabel = promo.label
+  return result
+}
+
+export const products: Product[] = [...groceryProducts, ...extraProducts].map(withPromo)

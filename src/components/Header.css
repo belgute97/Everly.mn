@@ -1,0 +1,128 @@
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 -16px;
+  padding: 8px 16px;
+  border-bottom: 1px solid transparent;
+  transition: background-color 0.3s, border-color 0.3s, backdrop-filter 0.3s;
+}
+
+.site-header.scrolled {
+  background: rgba(243, 245, 248, 0.78);
+  backdrop-filter: blur(16px) saturate(1.6);
+  border-bottom-color: rgba(221, 227, 234, 0.9);
+}
+
+@media (min-width: 640px) {
+  .site-header {
+    margin-inline: -24px;
+    padding-inline: 24px;
+  }
+}
+
+.logo {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  font-family: var(--font-heading);
+  font-size: 1.625rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.logo .icon {
+  transition: transform 0.5s var(--ease);
+}
+
+.logo:hover .icon {
+  transform: rotate(-18deg) scale(1.1);
+}
+
+.menu-btn {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-left: -8px;
+  color: var(--color-fg);
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.menu-btn:hover {
+  background: var(--color-tint);
+}
+
+.cart-link {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  color: var(--color-fg);
+  border-radius: 50%;
+  transition: background-color 0.2s, transform 0.2s var(--ease);
+}
+
+.cart-link:hover {
+  background: var(--color-tint);
+  transform: scale(1.06);
+}
+
+.theme-btn {
+  padding: 0;
+  font: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.cart-badge {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  min-width: 22px;
+  padding: 0 5px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 22px;
+  text-align: center;
+  color: #fff;
+  background: var(--color-accent);
+  border-radius: 999px;
+  animation: badge-pop 0.4s var(--ease);
+}
+
+@keyframes badge-pop {
+  40% {
+    transform: scale(1.5);
+  }
+}
+
+/* Компьютер дээр цэс нь зүүн талд тул лого, цэсийн товч энд хэрэггүй */
+@media (min-width: 1024px) {
+  .site-header {
+    justify-content: flex-end;
+  }
+
+  .menu-btn,
+  .header-logo {
+    display: none;
+  }
+}
+
+/* Нарийн дэлгэц дээр зүрхэн холбоос нуугдана: цэснээс орно */
+@media (max-width: 479px) {
+  .header-fav {
+    display: none;
+  }
+}
