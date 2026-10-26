@@ -6,7 +6,7 @@
   margin: 8px 0 20px;
   overflow: hidden;
   color: #fff;
-  background: linear-gradient(135deg, #0a5cb8, #06336b);
+  background: linear-gradient(135deg, #2b2a6f, #16154a);
   border-radius: 24px;
   box-shadow: var(--shadow);
 }
@@ -17,7 +17,7 @@
 .cat-banner-kids { background: linear-gradient(135deg, #e08a1e, #8f4f08); }
 .cat-banner-kitchen { background: linear-gradient(135deg, #c0392b, #6e1a12); }
 .cat-banner-appliances { background: linear-gradient(135deg, #5b3fa8, #2c1c66); }
-.cat-banner-tech { background: linear-gradient(135deg, #0a5cb8, #06336b); }
+.cat-banner-tech { background: linear-gradient(135deg, #2b2a6f, #16154a); }
 
 .cat-banner-img {
   position: absolute;

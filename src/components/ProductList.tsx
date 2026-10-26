@@ -1,10 +1,11 @@
-import type { CSSProperties } from 'react'
+import { useRef, type CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import { categories } from '../data/categories'
 import { formatPrice } from '../utils/formatPrice'
 import { discountPercent } from '../utils/promo'
 import type { Product } from '../types'
 import { shop, useShop } from '../store/shop'
+import { useReveal } from '../hooks/useReveal'
 import Icon from './icons'
 import ProductImage from './ProductImage'
 
@@ -18,6 +19,8 @@ interface Props {
 
 export default function ProductList({ products, getQty, onAdd, onSetQuantity, onReset }: Props) {
   const { saved } = useShop()
+  const grid = useRef<HTMLUListElement>(null)
+  useReveal(grid, '.product-card', [products])
   if (products.length === 0) {
     return (
       <div className="center-page">
@@ -29,7 +32,7 @@ export default function ProductList({ products, getQty, onAdd, onSetQuantity, on
     )
   }
   return (
-    <ul className="product-grid">
+    <ul className="product-grid" ref={grid}>
       {products.map((p, index) => {
         const size = p.sizes[0]
         const qty = getQty(p.id, size)

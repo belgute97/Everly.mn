@@ -1,27 +1,27 @@
 :root {
-  /* Брэндийн өнгө: Монголын туг дээр суурилсан хөх, улаан, алтлаг. Цэвэр цагаан карт, хүйтэн саарал суурь */
-  --color-bg: #f3f5f8;
+  /* Marketplace палитр: indigo primary, coral CTA, rose хямдрал, цайвар lavender суурь */
+  --color-bg: #f5f4fb;
   --color-card: #fff;
-  --color-fg: #0f1b2d;
-  --color-muted-fg: #56627a;
-  --color-border: #dde3ea;
-  --color-input-border: #8a94a6;
-  --color-tint: #e9eef5;
-  --color-primary: #0a5cb8;
-  --color-primary-dark: #084a94;
+  --color-fg: #14123a;
+  --color-muted-fg: #5f5e7e;
+  --color-border: #e2e1f0;
+  --color-input-border: #8584a3;
+  --color-tint: #ecebf8;
+  --color-primary: #2b2a6f;
+  --color-primary-dark: #1f1e5a;
   --color-on-primary: #fff;
-  --color-gold: #ffc83d;
-  --color-gold-dark: #f2b705;
-  --color-on-gold: #0f1b2d;
-  --color-accent: #d7263d;
-  --color-sale-text: #c0152f;
-  --color-danger: #b91c1c;
+  --color-gold: #ff5a36;
+  --color-gold-dark: #e8431f;
+  --color-on-gold: #14123a;
+  --color-accent: #e11d48;
+  --color-sale-text: #be123c;
+  --color-danger: #e11d48;
   --radius: 16px;
-  --shadow: 0 1px 2px rgba(15, 27, 45, 0.06), 0 4px 14px rgba(15, 27, 45, 0.06);
-  --shadow-lg: 0 10px 30px rgba(15, 27, 45, 0.22);
+  --shadow: 0 1px 2px rgba(20, 18, 58, 0.06), 0 4px 14px rgba(20, 18, 58, 0.06);
+  --shadow-lg: 0 10px 30px rgba(20, 18, 58, 0.22);
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --font-body: 'Inter', system-ui, sans-serif;
-  --font-heading: 'Manrope', 'Inter', system-ui, sans-serif;
+  --font-heading: 'Montserrat', 'Inter', system-ui, sans-serif;
 }
 
 *,
@@ -36,8 +36,8 @@ body {
   line-height: 1.55;
   color: var(--color-fg);
   background:
-    radial-gradient(900px 520px at 4% -8%, rgba(10, 92, 184, 0.14), transparent 60%),
-    radial-gradient(700px 440px at 100% 6%, rgba(255, 200, 61, 0.16), transparent 60%),
+    radial-gradient(900px 520px at 4% -8%, rgba(43, 42, 111, 0.14), transparent 60%),
+    radial-gradient(700px 440px at 100% 6%, rgba(255, 90, 54, 0.16), transparent 60%),
     var(--color-bg);
   background-attachment: fixed, fixed, scroll;
   -webkit-font-smoothing: antialiased;
@@ -64,7 +64,7 @@ h1 {
 }
 
 .page {
-  animation: page-in 0.5s var(--ease) both;
+  will-change: opacity, transform;
 }
 
 @keyframes page-in {
@@ -131,7 +131,7 @@ h1 {
 .btn-primary:hover:not(:disabled),
 .add-to-cart:hover:not(:disabled) {
   background: var(--color-gold-dark);
-  box-shadow: 0 8px 20px rgba(242, 183, 5, 0.45);
+  box-shadow: 0 8px 20px rgba(232, 67, 31, 0.45);
   transform: translateY(-2px);
 }
 
@@ -180,7 +180,7 @@ h1 {
   padding: 36px 24px 28px;
   overflow: hidden;
   color: #fff;
-  background: linear-gradient(135deg, #0a5cb8, #06336b);
+  background: linear-gradient(135deg, #2b2a6f, #16154a);
   border-radius: 28px;
 }
 
@@ -197,7 +197,7 @@ h1 {
   right: -60px;
   width: 280px;
   height: 280px;
-  background: radial-gradient(circle, rgba(255, 200, 61, 0.55), transparent 70%);
+  background: radial-gradient(circle, rgba(255, 90, 54, 0.55), transparent 70%);
   animation: float 9s ease-in-out infinite;
 }
 
@@ -236,7 +236,7 @@ h1 {
 }
 
 .sale-hero {
-  background: linear-gradient(135deg, #d7263d, #8f1228);
+  background: linear-gradient(135deg, #e11d48, #9f1239);
 }
 
 .sale-hero h1 {
@@ -265,7 +265,7 @@ h1 {
 
 .search input:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 4px rgba(10, 92, 184, 0.15);
+  box-shadow: 0 0 0 4px rgba(43, 42, 111, 0.15);
   outline: none;
 }
 
@@ -495,7 +495,7 @@ h1 {
   font-size: 0.8125rem;
   font-weight: 600;
   color: #7a5200;
-  background: rgba(255, 200, 61, 0.3);
+  background: rgba(255, 90, 54, 0.3);
   border-radius: 999px;
 }
 
@@ -598,7 +598,7 @@ h1 {
 .badge-sale {
   color: var(--color-on-gold);
   background: var(--color-gold);
-  box-shadow: 0 4px 12px rgba(242, 183, 5, 0.4);
+  box-shadow: 0 4px 12px rgba(232, 67, 31, 0.4);
 }
 
 .sold-out {
@@ -722,4 +722,123 @@ h1 {
   background: var(--color-card);
   border: 1.5px solid var(--color-border);
   border-radius: 12px;
+}
+
+/* Biite.nl-ээс авсан editorial маяг: том гарчиг, статистикийн мөр, илүү зайтай цэвэр картууд */
+.hero {
+  padding: 48px 28px 32px;
+}
+
+.hero h1 {
+  max-width: 14ch;
+  font-size: clamp(2.25rem, 8vw, 4rem);
+  letter-spacing: -0.035em;
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  max-width: 480px;
+  margin: 28px 0 0;
+  padding: 16px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.hero-stats dt {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.hero-stats dd {
+  margin: 2px 0 0;
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 5vw, 2.25rem);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.product-grid {
+  gap: 16px;
+}
+
+.product-card {
+  border-radius: 20px;
+}
+
+.card-cat {
+  letter-spacing: 0.1em;
+}
+
+.card-body h3 {
+  font-weight: 600;
+}
+
+/* Зүүн цэс хамгийн зүүн ирмэгт, агуулга үлдсэн өргөнийг дүүргэнэ */
+@media (min-width: 1024px) {
+  .shell {
+    max-width: none;
+    margin: 0;
+    padding: 0 24px 0 12px;
+  }
+
+  .app {
+    max-width: 1320px;
+    margin-inline: auto;
+  }
+}
+
+.empty-lottie {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 8px;
+}
+
+/* Премиум хэв маяг: serif гарчиг, нарийн жин */
+h1,
+h2,
+h3,
+.hero-stats dd,
+.promo-big {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.hero h1 {
+  letter-spacing: -0.02em;
+}
+
+.card-body h3 {
+  font-family: var(--font-body);
+  letter-spacing: 0;
+}
+
+/* Хуудас шилжих үеийн хөшиг */
+.curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: var(--color-primary-dark);
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.curtain::after {
+  content: 'Everly';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 8vw, 4rem);
+  color: var(--color-gold);
+  letter-spacing: 0.04em;
+}
+
+body {
+  overflow-x: clip;
 }

@@ -5,40 +5,40 @@
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --color-bg: #0b1220;
-  --color-card: #151f33;
-  --color-fg: #e8edf6;
-  --color-muted-fg: #a3afc4;
-  --color-border: #2a3750;
-  --color-input-border: #6b7a95;
-  --color-tint: #1d2a44;
-  --color-primary: #5aa2ff;
-  --color-primary-dark: #3d86e6;
-  --color-on-primary: #08111f;
-  --color-gold: #ffc83d;
-  --color-gold-dark: #f2b705;
-  --color-on-gold: #0f1b2d;
-  --color-accent: #ff5a70;
-  --color-sale-text: #ff8a9a;
-  --color-danger: #ff7b7b;
+  --color-bg: #0d0c24;
+  --color-card: #17163a;
+  --color-fg: #f1f0ff;
+  --color-muted-fg: #a3a2c8;
+  --color-border: #2c2b5a;
+  --color-input-border: #7a79a8;
+  --color-tint: #201f4a;
+  --color-primary: #a5a3ff;
+  --color-primary-dark: #8886f0;
+  --color-on-primary: #0d0c24;
+  --color-gold: #ff5a36;
+  --color-gold-dark: #e8431f;
+  --color-on-gold: #14123a;
+  --color-accent: #fb7185;
+  --color-sale-text: #fda4af;
+  --color-danger: #fb7185;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 14px rgba(0, 0, 0, 0.35);
   --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 
 :root[data-theme='dark'] body {
   background:
-    radial-gradient(900px 520px at 4% -8%, rgba(90, 162, 255, 0.12), transparent 60%),
-    radial-gradient(700px 440px at 100% 6%, rgba(255, 200, 61, 0.06), transparent 60%),
+    radial-gradient(900px 520px at 4% -8%, rgba(165, 163, 255, 0.12), transparent 60%),
+    radial-gradient(700px 440px at 100% 6%, rgba(255, 90, 54, 0.06), transparent 60%),
     var(--color-bg);
   background-attachment: fixed, fixed, scroll;
 }
 
 [data-theme='dark'] .site-header.scrolled {
-  background: rgba(11, 18, 32, 0.8);
+  background: rgba(13, 12, 36, 0.8);
 }
 
 [data-theme='dark'] .side-menu {
-  background: linear-gradient(160deg, rgba(27, 38, 61, 0.86), rgba(15, 24, 42, 0.7));
+  background: linear-gradient(160deg, rgba(30, 29, 70, 0.86), rgba(18, 17, 48, 0.7));
   border-color: rgba(255, 255, 255, 0.1);
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
@@ -50,7 +50,7 @@
 }
 
 [data-theme='dark'] .side-sublink.active {
-  background: rgba(90, 162, 255, 0.18);
+  background: rgba(165, 163, 255, 0.18);
 }
 
 [data-theme='dark'] .side-link.active {
@@ -62,7 +62,7 @@
 }
 
 [data-theme='dark'] .promo-nav button {
-  background: rgba(21, 31, 51, 0.8);
+  background: rgba(23, 22, 58, 0.8);
 }
 
 [data-theme='dark'] .promo-nav button:hover {
@@ -70,11 +70,11 @@
 }
 
 [data-theme='dark'] .fav-btn {
-  color: #0f1b2d;
+  color: #14123a;
 }
 
 [data-theme='dark'] .fav-btn.active {
-  color: #d7263d;
+  color: #e11d48;
 }
 
 [data-theme='dark'] .error-summary {
@@ -92,11 +92,11 @@
 
 [data-theme='dark'] .promo-chip {
   color: #ffd877;
-  background: rgba(255, 200, 61, 0.16);
+  background: rgba(255, 90, 54, 0.16);
 }
 
 [data-theme='dark'] .product-img:not(.is-loaded) {
-  background: linear-gradient(100deg, #1d2a44 30%, #26365a 50%, #1d2a44 70%) 0 0 / 300% 100%;
+  background: linear-gradient(100deg, #201f4a 30%, #2c2b5a 50%, #201f4a 70%) 0 0 / 300% 100%;
 }
 
 [data-theme='dark'] .chat-window,
@@ -109,7 +109,7 @@
 [data-theme='dark'] .chat-user,
 [data-theme='dark'] .cart-badge,
 [data-theme='dark'] .side-badge {
-  color: #08111f;
+  color: #0d0c24;
 }
 
 /* Арын тоосонцор: контентын ард, товшилтод саад болохгүй */
@@ -126,16 +126,16 @@
 [data-theme='dark'] .ad-banner {
   color: #ffe9a8;
   background: linear-gradient(90deg, #3b2f0a, #2a2208);
-  border-bottom: 1px solid rgba(255, 200, 61, 0.25);
+  border-bottom: 1px solid rgba(255, 90, 54, 0.25);
 }
 
 [data-theme='dark'] .ad-banner code {
   color: #ffe9a8;
-  background: rgba(255, 200, 61, 0.18);
+  background: rgba(255, 90, 54, 0.18);
 }
 
 [data-theme='dark'] .ad-link {
-  color: #0f1b2d;
+  color: #14123a;
   background: var(--color-gold);
 }
 
@@ -145,6 +145,6 @@
 
 /* Цайвар хөх дэвсгэр дээр цагаан үсэг тодрохгүй тул гүн хөх болгоно */
 [data-theme='dark'] .wallet-card {
-  background: linear-gradient(135deg, #1d4f9c, #12306a);
-  border: 1px solid rgba(90, 162, 255, 0.35);
+  background: linear-gradient(135deg, #3a38a0, #1f1e5a);
+  border: 1px solid rgba(165, 163, 255, 0.35);
 }

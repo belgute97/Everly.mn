@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { Lottie } from 'lottie-react'
+import pulse from '../animations/emptyCart.json'
 import CartItemRow from '../components/CartItemRow'
 import { products } from '../data/products'
 import { formatPrice } from '../utils/formatPrice'
@@ -21,6 +23,7 @@ export default function CartPage({ items, maxFor, onSetQuantity, onRemove }: Pro
   if (rows.length === 0) {
     return (
       <section className="center-page">
+        <Lottie src={pulse} loop className="empty-lottie" aria-hidden="true" />
         <h1>Сагс хоосон байна</h1>
         <p className="muted">Дуртай бараагаа сонгоод сагсандаа нэмээрэй.</p>
         <Link to="/" className="btn-primary">Дэлгүүр рүү буцах</Link>
