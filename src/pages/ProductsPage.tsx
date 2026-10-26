@@ -1,4 +1,5 @@
 import { useSearchParams } from 'react-router-dom'
+import { EndPoster, HeroSlider, Marquee, PosterTrio, SplitPoster, Tiles } from '../components/Posters'
 import CategoryBanner from '../components/CategoryBanner'
 import CategoryFilter from '../components/CategoryFilter'
 import ProductList from '../components/ProductList'
@@ -46,6 +47,8 @@ export default function ProductsPage({ getQty, onAdd, onSetQuantity, saleOnly = 
   const visible = filterProducts(source, allowed, query).filter((p) => !sub || productSub[p.id] === sub)
   const sorted = sortProducts(visible, sort)
 
+  const home = !saleOnly && query === '' && !group
+
   return (
     <>
       {saleOnly ? (
@@ -53,20 +56,20 @@ export default function ProductsPage({ getQty, onAdd, onSetQuantity, saleOnly = 
           <h1>Хямдрал, урамшуулал</h1>
           <p>Зөвхөн хямдралтай болон урамшуулалтай бараанууд: {source.length} бараа.</p>
         </section>
-      ) : (
-        <section className="hero">
-          <h1>Хүнс, хувцас, технологи нэг дор</h1>
-          <p>Хэрэгтэй бүхнээ сонгоод сагсандаа нэмээрэй: хүнс, хувцас, гал тогоо, цахилгаан бараа, технологи.</p>
-          <button
-            type="button"
-            className="btn-primary"
-            onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
-          >
-            Бараа үзэх
-          </button>
-        </section>
+      ) : home ? (
+        <>
+          <HeroSlider />
+          <Tiles />
+        </>
+      ) : null}
+      {home && (
+        <>
+          <PromoRail />
+          <PosterTrio />
+          <Marquee />
+          <SplitPoster />
+        </>
       )}
-      {!saleOnly && query === '' && !group && <PromoRail />}
       <div id="products">
         <SearchBox value={query} onChange={(q) => update({ q })} />
         <CategoryFilter source={source} group={group} sub={sub} onGroup={(g) => update({ group: g })} onSub={(s) => update({ sub: s })} />
@@ -88,6 +91,7 @@ export default function ProductsPage({ getQty, onAdd, onSetQuantity, saleOnly = 
           onReset={() => setParams({}, { replace: true })}
         />
       </div>
+      {home && <EndPoster />}
     </>
   )
 }

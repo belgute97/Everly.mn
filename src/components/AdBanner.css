@@ -34,7 +34,7 @@
   font-weight: 700;
   color: #fff;
   text-decoration: none;
-  background: #0f1b2d;
+  background: #14123a;
   border-radius: 999px;
 }
 
@@ -52,5 +52,5 @@
 }
 
 .ad-close:hover {
-  background: rgba(15, 27, 45, 0.12);
+  background: rgba(20, 18, 58, 0.12);
 }

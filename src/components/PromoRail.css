@@ -39,24 +39,12 @@
 }
 
 .promo-rail {
-  display: flex;
-  gap: 14px;
   margin: 0 -16px;
   padding: 4px 16px 12px;
-  overflow-x: auto;
-  list-style: none;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
 }
 
-.promo-rail::-webkit-scrollbar {
-  display: none;
-}
-
-.promo-banner,
-.promo-card {
-  flex: none;
-  scroll-snap-align: start;
+.promo-rail .swiper-slide {
+  height: auto;
 }
 
 .promo-banner {
@@ -69,7 +57,7 @@
   padding: 22px;
   overflow: hidden;
   color: #fff;
-  background: linear-gradient(145deg, #d7263d, #8f1228);
+  background: linear-gradient(145deg, #e11d48, #9f1239);
   border-radius: 24px;
 }
 
@@ -120,7 +108,7 @@
   min-height: 44px;
   padding: 0 18px;
   font-weight: 600;
-  color: #8f1228;
+  color: #9f1239;
   text-decoration: none;
   background: #fff;
   border-radius: 999px;

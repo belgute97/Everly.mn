@@ -1,4 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
+import { Autoplay, FreeMode } from 'swiper/modules'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import type { Swiper as SwiperType } from 'swiper'
+import 'swiper/css'
 import { Link } from 'react-router-dom'
 import { products } from '../data/products'
 import { formatPrice } from '../utils/formatPrice'
@@ -7,12 +11,9 @@ import Icon from './icons'
 import ProductImage from './ProductImage'
 import './PromoRail.css'
 
-const AUTOPLAY_MS = 5000
-
-// Нүүрний сурталчилгааны хэсэг: хямдралтай, урамшуулалтай барааг 5 секунд тутамд автоматаар гүйлгэнэ
+// Нүүрний сурталчилгааны хэсэг: Swiper-ээр хямдралтай барааг автоматаар гүйлгэнэ
 export default function PromoRail() {
-  const rail = useRef<HTMLUListElement>(null)
-  const [hover, setHover] = useState(false) // хулгана, фокус байхад түр зогсоно
+  const swiper = useRef<SwiperType | null>(null)
   const [stopped, setStopped] = useState(false) // хэрэглэгч өөрөө зогсоосон
   const promoProducts = products
     .filter((p) => isPromo(p) && p.stock > 0)
@@ -20,36 +21,16 @@ export default function PromoRail() {
     .slice(0, 12)
   const maxDiscount = Math.max(0, ...promoProducts.map(discountPercent))
 
-  const step = () => {
-    const el = rail.current
-    const card = el?.querySelector<HTMLElement>('.promo-card')
-    if (!el || !card) return 280
-    return card.getBoundingClientRect().width + 14
+  const toggle = () => {
+    if (stopped) swiper.current?.autoplay.start()
+    else swiper.current?.autoplay.stop()
+    setStopped(!stopped)
   }
-
-  const scrollBy = (dir: number) => rail.current?.scrollBy({ left: dir * step(), behavior: 'smooth' })
-
-  useEffect(() => {
-    if (hover || stopped) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const timer = setInterval(() => {
-      const el = rail.current
-      if (!el || document.hidden) return
-      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 8
-      if (atEnd) el.scrollTo({ left: 0, behavior: 'smooth' })
-      else el.scrollBy({ left: step(), behavior: 'smooth' })
-    }, AUTOPLAY_MS)
-    return () => clearInterval(timer)
-  }, [hover, stopped])
 
   return (
     <section
       className="promo"
       aria-labelledby="promo-title"
-      onPointerEnter={() => setHover(true)}
-      onPointerLeave={() => setHover(false)}
-      onFocus={() => setHover(true)}
-      onBlur={() => setHover(false)}
     >
       <div className="promo-head">
         <h2 id="promo-title">Хямдрал, урамшуулал</h2>
@@ -58,29 +39,37 @@ export default function PromoRail() {
             type="button"
             aria-label={stopped ? 'Автоматаар гүйлгэхийг үргэлжлүүлэх' : 'Автоматаар гүйлгэхийг зогсоох'}
             aria-pressed={stopped}
-            onClick={() => setStopped(!stopped)}
+            onClick={toggle}
           >
             <Icon name={stopped ? 'play' : 'pause'} size={18} />
           </button>
-          <button type="button" aria-label="Өмнөх" onClick={() => scrollBy(-1)}>
+          <button type="button" aria-label="Өмнөх" onClick={() => swiper.current?.slidePrev()}>
             <Icon name="arrowLeft" size={20} />
           </button>
-          <button type="button" aria-label="Дараах" onClick={() => scrollBy(1)}>
+          <button type="button" aria-label="Дараах" onClick={() => swiper.current?.slideNext()}>
             <Icon name="arrowRight" size={20} />
           </button>
         </div>
       </div>
-      <ul className="promo-rail" ref={rail}>
-        <li className="promo-banner">
+      <Swiper
+        className="promo-rail"
+        modules={[Autoplay, FreeMode]}
+        slidesPerView="auto"
+        spaceBetween={14}
+        freeMode={{ enabled: true, sticky: true }}
+        autoplay={{ delay: 4500, pauseOnMouseEnter: true, disableOnInteraction: false }}
+        onSwiper={(sw) => (swiper.current = sw)}
+      >
+        <SwiperSlide className="promo-banner">
           <p className="promo-eyebrow">Улирлын хямдрал</p>
           <p className="promo-big">{maxDiscount}% хүртэл</p>
           <p className="promo-sub">Сонгосон бараанд хямдрал, бэлэг, үнэгүй хүргэлт.</p>
           <Link to="/sale" className="promo-cta">
             Бүгдийг үзэх <Icon name="arrowRight" size={18} />
           </Link>
-        </li>
+        </SwiperSlide>
         {promoProducts.map((p) => (
-          <li key={p.id} className="promo-card">
+          <SwiperSlide key={p.id} className="promo-card">
             <Link to={`/products/${p.id}`}>
               <div className="promo-media">
                 <ProductImage src={p.image} alt="" lazy />
@@ -92,9 +81,9 @@ export default function PromoRail() {
                 {p.oldPrice && <s className="price-old">{formatPrice(p.oldPrice)}</s>}
               </p>
             </Link>
-          </li>
+          </SwiperSlide>
         ))}
-      </ul>
+      </Swiper>
     </section>
   )
 }

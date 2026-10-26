@@ -1,4 +1,5 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useLayoutEffect, useRef, useState } from 'react'
+import { gsap } from 'gsap'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import AdBanner from './components/AdBanner'
 import ChatWidget from './components/ChatWidget'
@@ -9,6 +10,7 @@ import SideMenu from './components/SideMenu'
 import Toast, { type ToastData } from './components/Toast'
 import { products } from './data/products'
 import { useCart } from './hooks/useCart'
+import { useSmoothScroll } from './hooks/useSmoothScroll'
 import CartPage from './pages/CartPage'
 import CheckoutPage from './pages/CheckoutPage'
 import GamesPage from './pages/GamesPage'
@@ -25,8 +27,27 @@ import { isPromo } from './utils/promo'
 const saleCount = products.filter(isPromo).length
 
 function App() {
+  useSmoothScroll()
+  const curtain = useRef<HTMLDivElement>(null)
+  const first = useRef(true)
   const cart = useCart()
   const location = useLocation()
+  // Route солигдоход хөшиг дээрээс доош татагдаж, шинэ хуудас доороос нь гарч ирнэ
+  useLayoutEffect(() => {
+    if (first.current) {
+      first.current = false
+      return
+    }
+    window.scrollTo(0, 0)
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const tl = gsap.timeline({ onStart: () => { if (curtain.current) curtain.current.style.visibility = 'visible' }, onComplete: () => { if (curtain.current) curtain.current.style.visibility = 'hidden' } })
+    tl.fromTo(curtain.current, { yPercent: 100 }, { yPercent: 0, duration: 0.45, ease: 'power3.in' })
+      .to(curtain.current, { yPercent: -100, duration: 0.65, ease: 'power4.inOut', delay: 0.05 })
+      .from('.page', { opacity: 0, y: 40, duration: 0.7, ease: 'power3.out' }, '-=0.4')
+    return () => {
+      tl.kill()
+    }
+  }, [location.pathname])
   const [menuOpen, setMenuOpen] = useState(false)
   const closeMenu = useCallback(() => setMenuOpen(false), [])
   const [toast, setToast] = useState<ToastData | null>(null)
@@ -58,6 +79,7 @@ function App() {
 
   return (
     <div className="shell">
+      <div className="curtain" ref={curtain} aria-hidden="true" />
       <ParticlesBackground />
       <SideMenu open={menuOpen} onClose={closeMenu} saleCount={saleCount} />
       <main className="app">
